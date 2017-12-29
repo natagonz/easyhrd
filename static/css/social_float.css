@@ -1,0 +1,26 @@
+/*social icon */
+#social_side_links {
+    position: fixed;
+  top: 70px;
+  right: 1cm;
+  padding: 0;
+  list-style: none;
+  z-index: 99;
+}
+
+#social_side_links li a {display: block;}
+
+#social_side_links li a img {
+    display: block;
+    max-width:80px;
+  padding: 10px;
+  -webkit-transition:  background .2s ease-in-out;
+  -moz-transition:  background .2s ease-in-out;
+  -o-transition:  background .2s ease-in-out;
+  transition:  background .2s ease-in-out;
+}
+
+#social_side_links li a:hover img {background: rgba(0, 0, 0, .2);}
+.red{
+  color: #DD5A43!important;
+}

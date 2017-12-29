@@ -1,0 +1,70 @@
+{% extends "layouts/dashboardtemplate.html" %}
+{% block title %} Attendance {% endblock %}
+
+
+{% block content %}
+<link href="{{url_for ('static',filename='css/social_float.css')}}" rel="stylesheet"/>
+<ul id="social_side_links">
+  <li><a href="/dashboard/add-attendance"><img class="icon-float" src="https://cdn0.iconfinder.com/data/icons/round-ui-icons/512/add_blue.png" alt="" /></a></li>
+</ul>
+<div class="row">                
+    <div class="col-lg-11 col-md-10">
+        <div class="card">
+            <div class="content">
+              <div class="table-responsive">
+
+            <table class="table"> 
+                <thead>
+                <tr>
+                    <td>Nama</td>                    
+                    <td>Departement</td>
+                    <td>Mulai</td>
+                    <td>Sampai</td> 
+                    <td>Alasan</td>   
+                    <td>Status</td> 
+                    <td></td> 
+                    <td></td>                 
+                </tr>
+                </thead>
+
+                {% for atten in attendances  %}
+                    <tbody>
+                        <tr>
+                            <td>{{ atten.name }}</td>                    
+                            <td>{{ atten.departement }}</td>
+                            <td>{{ atten.start.strftime("%d-%m-%Y") }}</td>
+                            <td>{{ atten.end.strftime("%d-%m-%Y") }}</td>
+                            <td>{{ atten.reason }}</td>
+                            <td>{{ atten.status }}</td>
+                            <td><a href="/dashboard/edit-attendance/{{ atten.id }}" class="btn btn-info">Edit</a></td>
+                            <td><button type="button" class="btn btn-danger" onclick="myFunction()">Delete</button></td> 
+                        </tr>
+                     </tbody>      
+                      <script>
+                            function myFunction() {
+                                 var x = window.confirm("Are You Sure ?");
+                                    if(x){
+                                           window.location = '/dashboard/delete-attendance/{{ atten.id}}' ;
+                                            }
+                                     else {
+                                           return false;
+                                          }
+                                    }    
+                            </script>     
+                            
+
+
+                {% endfor %}
+
+
+
+
+
+                      </table>
+                 </div> 
+               </div>      
+          </div>            
+     </div>       
+</div>
+
+{% endblock %}

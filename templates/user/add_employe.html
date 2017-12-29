@@ -1,0 +1,129 @@
+{% extends "layouts/dashboardtemplate.html" %}
+
+{% block title %} Dashboard {% endblock%}
+
+
+{% block content %}
+<div class="row">                
+                  <div class="col-lg-11 col-md-10">
+                        <div class="card">
+                            <div class="header">                            	
+							    <h4 class="title">Tambah Data Pegawai</h4>
+                            </div>
+                            <div class="content">
+
+                           	{% from "includes/_formhelpers.html" import render_field %}
+                               <form method="POST" enctype="multipart/form-data">
+               				   {{ form.hidden_tag() }}
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.name, class="form-control",placeholder="Nama")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.email, class="form-control",placeholder="Email")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.phone, class="form-control",placeholder="Nomor Telepon")}}
+                                            </div>
+                                        </div>
+                                    </div>                                                  
+                                    
+                                     <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.departement, class="form-control",placeholder="Departement")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.skill, class="form-control",placeholder="Skill")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.salary, class="form-control",placeholder="Gaji")}}
+                                            </div>
+                                        </div>
+                                         
+                                       
+                                    </div> 
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.added, class="dtpick form-control")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.address, class="form-control",placeholder="Alamat")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.birth, class="dtpick form-control")}}
+                                            </div>
+                                        </div>  
+                                                                   
+                                       
+                                    </div> 
+                                      
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.gender, class="form-control",placeholder="Jenis Kelamin")}}
+                                            </div>
+                                        </div>  
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.status, class="form-control",placeholder="Status")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.religion, class="form-control",placeholder="Agama")}}
+                                            </div>
+                                        </div>
+                                        
+                                    </div> 
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                             <div class="form-group">
+                                                {{ render_field(form.image)}}
+                                            </div>
+                                            
+                                        </div>
+                                    </div>  
+                                    
+                                    
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-info btn-fill btn-wd">Simpan</button>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+			
+          </div>
+
+
+
+	
+			
+              
+
+
+
+
+
+
+
+
+
+{% endblock %}

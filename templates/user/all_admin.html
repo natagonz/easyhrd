@@ -1,0 +1,59 @@
+{% extends "layouts/dashboardtemplate.html" %}
+{% block title %} Admin {% endblock %}
+
+
+{% block content %}
+<link href="{{url_for ('static',filename='css/social_float.css')}}" rel="stylesheet"/>
+<ul id="social_side_links">
+  <li><a href="/dashboard/add-admin"><img class="icon-float" src="https://cdn0.iconfinder.com/data/icons/round-ui-icons/512/add_blue.png" alt="" /></a></li>
+</ul>
+<div class="row">                
+    <div class="col-lg-11 col-md-10">
+        <div class="card">
+            <div class="content">
+              <div class="table-responsive"> 
+
+            <table class="table"> 
+                <thead>
+                <tr>
+                    <td>username</td>
+                    <td>email</td>  
+                    <td></td>                  
+                </tr>
+                </thead>
+
+                {% for admin in admins  %}
+                    <tbody>
+                        <tr>
+                            <td>{{ admin.username }}</td>
+                            <td>{{ admin.email }}</td>                                                       
+                            <td><a class="red" onclick="myFunction()"><i class="ti-trash"></i></a></td>
+                            </tr>
+                     </tbody>           
+                             <script>
+                            function myFunction() {
+                                 var x = window.confirm("Are You Sure ?");
+                                    if(x){
+                                           window.location = '/dashboard/delete-admin/{{ admin.id}}' ;
+                                            }
+                                     else {
+                                           return false;
+                                          }
+                                    }    
+                            </script>
+
+
+                {% endfor %}
+
+
+
+
+
+                      </table>
+                 </div>     
+               </div>  
+          </div>            
+     </div>       
+</div>
+
+{% endblock %}
