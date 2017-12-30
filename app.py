@@ -1,6 +1,6 @@
 from flask import Flask , render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy 
-from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,ForgotPasswordForm,ResetPasswordForm
+from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from flask_login import LoginManager , UserMixin, login_user, login_required, logout_user, current_user
@@ -45,6 +45,8 @@ class User(db.Model):
 	id = db.Column(db.Integer,primary_key=True)
 	username = db.Column(db.String(100))
 	email = db.Column(db.String(100))
+	phone = db.Column(db.String(100))
+	company = db.Column(db.String(100))
 	password = db.Column(db.String(100))
 	role = db.Column(db.String(100))
 	trial_date = db.Column(db.DateTime())
@@ -135,13 +137,13 @@ def Index():
 
 @app.route("/register",methods=["GET","POST"])
 def UserRegister():
-	form = UserRegisterForm()
+	form = SuperuserRegisterForm()
 	if form.validate_on_submit():
 		trial = datetime.today()
 		start = trial + timedelta(days=7)
 		renew = start + timedelta(days=365)
 		hass = generate_password_hash(form.password.data,method="sha256")
-		user = User(username=form.username.data,email=form.email.data,password=hass,trial_date=trial,start_date=start,renew_date=renew,role="user",status="trial")
+		user = User(username=form.username.data,email=form.email.data,phone=form.phone,company=form.company.data,password=hass,trial_date=trial,start_date=start,renew_date=renew,role="user",status="trial")
 		check_email = User.query.filter_by(email=form.email.data).all()
 		if len(check_email) > 0 :
 			flash("Email telah terdaftar","danger")

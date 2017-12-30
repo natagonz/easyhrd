@@ -12,6 +12,15 @@ class UserRegisterForm(FlaskForm):
 	email = StringField("Email",validators=[InputRequired(),Length(max=100),Email()])
 	password = PasswordField("Password",validators=[InputRequired(),Length(min=6,max=100)])
 
+class SuperuserRegisterForm(FlaskForm):
+	username = StringField("Username",validators=[InputRequired(),Length(max=100)])
+	email = StringField("Email",validators=[InputRequired(),Length(max=100),Email()])
+	password = PasswordField("Password",validators=[InputRequired(),Length(min=6,max=100)])
+	phone = StringField("Phone",validators=[Length(max=100),InputRequired()])
+	company = StringField("Perusahaan",validators=[Length(max=100),InputRequired()])
+
+
+
 
 
 class UserLoginForm(FlaskForm):
