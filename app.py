@@ -7,14 +7,14 @@ from flask_login import LoginManager , UserMixin, login_user, login_required, lo
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer,SignatureExpired
 from flask_uploads import UploadSet, IMAGES, configure_uploads
-
+from config import database,secret
 
 
 
 
 app = Flask(__name__) 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:root@localhost/hrd"
-app.config["SECRET_KEY"] = "ini rahasia"
+app.config["SQLALCHEMY_DATABASE_URI"] = database
+app.config["SECRET_KEY"] = secret
 db = SQLAlchemy(app)
 app.debug = True
 
