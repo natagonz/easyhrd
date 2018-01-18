@@ -1,6 +1,6 @@
 from flask import Flask , render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy 
-from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm
+from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm,ConfirmPaymentForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from flask_login import LoginManager , UserMixin, login_user, login_required, logout_user, current_user
@@ -119,6 +119,16 @@ class Review(db.Model):
 	reviewer_owner = db.Column(db.Integer())
 
 
+class Confirm(db.Model):
+	id = db.Column(db.Integer,primary_key=True)
+	username = db.Column(db.String(200))
+	email = db.Column(db.String(200))
+	from_bank = db.Column(db.String(200))
+	to_bank = db.Column(db.String(200))
+	bank_account = db.Column(db.String(200))
+	date = db.Column(db.DateTime()) 	
+
+
 
 
 
@@ -159,29 +169,30 @@ def OwnerLogin():
 	if form.validate_on_submit():
 		user = User.query.filter_by(username=form.username.data).first()
 		if user :
-			if check_password_hash(user.password,form.password.data):
-				if check_password_hash(user.double_pass,form.double.data):
-					login_user(user)
-					flash("Yuk masuk")
-					return redirect(url_for("Index"))
+			if check_password_hash(user.password,form.password.data) and check_password_hash(user.double_pass,form.double.data):				
+				login_user(user)
+				flash("Yuk masuk")
+				return redirect(url_for("OwnerDashboard"))
 		flash("Someting wrong","danger")
 	return render_template("admin/login.html",form=form)	
 
 
 
 
-
-@app.route("/dashboard/admin/all-user",methods=["GET","POST"])
+@app.route("/admin/dashboard",methods=["GET","POST"])
 @login_required
-def AdminAllUser():
-	users = User.query.filter_by(role="user").all()
-	return render_template("admin/all_user.html",users=users)
+def OwnerDashboard():
+	users = len(User.query.all())
+	trial = len(User.query.filter_by(status="trial").all())
+	pending = len(User.query.filter_by(status="pending").all())
+	active = len(User.query.filter_by(status="active").all())	
+	return render_template("admin/dashboard.html",users=users,trial=trial,pending=pending,active=active)
 
 
 
 
 
-############# user############################
+############# user ############################
 
 
 @app.route("/register",methods=["GET","POST"])
@@ -608,10 +619,15 @@ def UserInvoice():
 @app.route("/dashboard/konfirmasi",methods=["GET","POST"])
 @login_required
 def PaymentConfirm():
-	return render_template("user/konfirmasi.html")
-
-
-
+	form = ConfirmPaymentForm()
+	if form.validate_on_submit():
+		today = datetime.today()
+		pay = Confirm(username=current_user.username,email=current_user.email,from_bank=form.from_bank.data,to_bank=form.to_bank.data,bank_account=form.bank_account.data,date=today)
+		db.session.add(pay)
+		db.session.commit()
+		flash("Terima Kasih,Konfirmasi anda telah kami terima","success")
+		return redirect(url_for("UserDashboard"))
+	return render_template("user/konfirmasi.html",form=form)
 
 
 

@@ -75,10 +75,6 @@ class AddAttendanceForm(FlaskForm):
 
 
 
-
-
-
-
 class OwnerRegisterForm(FlaskForm):
 	username = StringField("Username",validators=[InputRequired(),Length(max=100)])
 	email = StringField("Email",validators=[InputRequired(),Length(max=100),Email()])
@@ -91,7 +87,13 @@ class OwnerLoginForm(FlaskForm):
 	username = StringField("Username",validators=[InputRequired(),Length(max=100)])	
 	password = PasswordField("Password",validators=[InputRequired(),Length(min=6,max=100)])
 	double = PasswordField("Password Lage",validators=[InputRequired(),Length(min=6,max=100)])
+	
 
+
+class ConfirmPaymentForm(FlaskForm):
+	from_bank = StringField("Nama Bank",validators=[InputRequired(),Length(max=100)])
+	bank_account = StringField("Nama Pemilik Rekening",validators=[InputRequired(),Length(max=100)])
+	to_bank = SelectField("Bank Tujuan",choices= [("Mandiri ","Mandiri"),("BRI","BRI")])
 
 
 

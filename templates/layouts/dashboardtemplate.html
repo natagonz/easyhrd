@@ -53,7 +53,7 @@
                 </a>
             </div>           
              <ul class="nav">
-             {% if current_user.role == "user" %}
+             {% if current_user.status == "trial" %}
                 <li>
                     <a href="/dashboard">
                         <i class="ti-panel"></i>
@@ -90,7 +90,44 @@
                         <p>Konfirmasi</p>
                     </a>
                 </li>    
-                {% else %}   
+            {% elif current_user.role == "user" %}
+                <li>
+                    <a href="/dashboard">
+                        <i class="ti-panel"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="/dashboard/admin">
+                        <i class="ti-user"></i>
+                        <p>Admin</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="/dashboard/employe">
+                        <i class="ti-server"></i>
+                        <p>Employe</p>
+                    </a>
+                </li> 
+                <li>
+                    <a href="/dashboard/attendance">
+                        <i class="ti-calendar"></i>
+                        <p>Cuti</p>
+                    </a>
+                </li>  
+                <li>
+                    <a href="/dashboard/invoice">
+                        <i class="ti-bell"></i>
+                        <p>Invoice</p>
+                    </a>
+                </li>  
+                <li>
+                    <a href="/dashboard/konfirmasi">
+                        <i class="ti-email"></i>
+                        <p>Konfirmasi</p>
+                    </a>
+                </li>        
+            {% else %}   
                  <li>
                     <a href="/dashboard">
                         <i class="ti-panel"></i>
@@ -109,7 +146,7 @@
                         <p>Cuti</p>
                     </a>
                 </li>  
-                {% endif %}                 
+            {% endif %}                 
                 
             </ul>
 
