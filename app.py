@@ -1,6 +1,6 @@
 from flask import Flask , render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy 
-from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm
+from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from flask_login import LoginManager , UserMixin, login_user, login_required, logout_user, current_user
@@ -41,6 +41,7 @@ mail = Mail(app)
 s = URLSafeTimedSerializer("secret")
 
 
+
 class User(db.Model):
 	id = db.Column(db.Integer,primary_key=True)
 	username = db.Column(db.String(100))
@@ -48,6 +49,7 @@ class User(db.Model):
 	phone = db.Column(db.String(100))
 	company = db.Column(db.String(100))
 	password = db.Column(db.String(100))
+	double_pass = db.Column(db.String(400))
 	role = db.Column(db.String(100))
 	trial_date = db.Column(db.DateTime())
 	start_date = db.Column(db.DateTime())
@@ -135,6 +137,53 @@ def Index():
 
 
 
+
+##################### admin route #####################
+@app.route("/admin-register",methods=["GET","POST"])
+def OwnerRegister():
+	form = OwnerRegisterForm()
+	if form.validate_on_submit():
+		hass = generate_password_hash(form.password.data,method="sha256")
+		double = generate_password_hash(form.double.data,method="sha256")
+		user = User(username=form.username.data,email=form.email.data,password=hass,double_pass=double,role="SuperUser")
+		db.session.add(user)
+		db.session.commit()
+		return redirect(url_for("OwnerLogin"))
+	return render_template("admin/register.html",form=form)
+
+
+
+@app.route("/yuk-masuk",methods=["GET","POST"])
+def OwnerLogin():
+	form = OwnerLoginForm()
+	if form.validate_on_submit():
+		user = User.query.filter_by(username=form.username.data).first()
+		if user :
+			if check_password_hash(user.password,form.password.data):
+				if check_password_hash(user.double_pass,form.double.data):
+					login_user(user)
+					flash("Yuk masuk")
+					return redirect(url_for("Index"))
+		flash("Someting wrong","danger")
+	return render_template("admin/login.html",form=form)	
+
+
+
+
+
+@app.route("/dashboard/admin/all-user",methods=["GET","POST"])
+@login_required
+def AdminAllUser():
+	users = User.query.filter_by(role="user").all()
+	return render_template("admin/all_user.html",users=users)
+
+
+
+
+
+############# user############################
+
+
 @app.route("/register",methods=["GET","POST"])
 def UserRegister():
 	form = SuperuserRegisterForm()
@@ -143,7 +192,7 @@ def UserRegister():
 		start = trial + timedelta(days=7)
 		renew = start + timedelta(days=365)
 		hass = generate_password_hash(form.password.data,method="sha256")
-		user = User(username=form.username.data,email=form.email.data,phone=form.phone,company=form.company.data,password=hass,trial_date=trial,start_date=start,renew_date=renew,role="user",status="trial")
+		user = User(username=form.username.data,email=form.email.data,phone=form.phone.data,company=form.company.data,password=hass,trial_date=trial,start_date=start,renew_date=renew,role="user",status="trial")
 		check_email = User.query.filter_by(email=form.email.data).all()
 		if len(check_email) > 0 :
 			flash("Email telah terdaftar","danger")
@@ -162,10 +211,13 @@ def UserLogin():
 	if form.validate_on_submit():
 		user = User.query.filter_by(email=form.email.data).first()
 		if user :
-			if check_password_hash(user.password,form.password.data):
-				login_user(user)
-				flash("Anda berhasil masuk","success")
-				return redirect(url_for("UserDashboard"))
+			if user.role == "SuperUser":
+				return render_template("user/login.html",form=form)
+			else :	
+				if check_password_hash(user.password,form.password.data):
+					login_user(user)
+					flash("Anda berhasil masuk","success")
+					return redirect(url_for("UserDashboard"))
 		flash("Email atau Password salah","danger")
 	return render_template("user/login.html",form=form)
 
@@ -244,6 +296,7 @@ def UserResetPassword():
 
 
 @app.route("/dashboard",methods=["GET","POST"])
+@login_required
 def UserDashboard():
 	if current_user.role == "user":
 		employe = len(Employe.query.filter_by(owner_id=current_user.id).all())
@@ -304,15 +357,14 @@ def DeleteAdmin(id):
 def AddEmploye():
 	form = AddEmployeForm()
 	if form.validate_on_submit():
-		if current_user.role == "user":
-			filename = images.save(form.image.data)
-			employe = Employe(name=form.name.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,skill=form.skill.data,salary=form.salary.data,added=form.added.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,owner_id=current_user.id,image_name=filename)	
+		if current_user.role == "user":				
+			employe = Employe(name=form.name.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,skill=form.skill.data,salary=form.salary.data,added=form.added.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,owner_id=current_user.id,image_name="avatar.png")	
 			db.session.add(employe)
 			db.session.commit()
 			flash("Data pegawai berhasil di tambah","success")
 			return redirect(url_for("AllEmploye"))
 		else :
-			employe = Employe(name=form.name.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,skill=form.skill.data,salary=form.salary.data,added=form.added.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,owner_id=current_user.users,image_name=filename)	
+			employe = Employe(name=form.name.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,skill=form.skill.data,salary=form.salary.data,added=form.added.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,owner_id=current_user.users,image_name="avatar.png")	
 			db.session.add(employe)
 			db.session.commit()
 			flash("Data pegawai berhasil di tambah","success")
@@ -326,10 +378,12 @@ def AddEmploye():
 def AllEmploye():
 	if current_user.role == "user":
 		employer = Employe.query.filter_by(owner_id=current_user.id).all()
-		return render_template("user/all_employe.html",employer=employer)
+		length = len(employer)
+		return render_template("user/all_employe.html",employer=employer,length=length)
 	else :
 		employer = Employe.query.filter_by(owner_id=current_user.users).all()
-		return render_template("user/all_employe.html",employer=employer)
+		length = len(employer)
+		return render_template("user/all_employe.html",employer=employer,length=length)
 
 
 

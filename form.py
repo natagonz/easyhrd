@@ -48,7 +48,7 @@ class AddEmployeForm(FlaskForm):
 	gender = SelectField("Jenis Kelamin",choices= [("Laki Laki","Laki Laki"),("Perempuan","Perempuan")])
 	status = SelectField("Status",choices= [("Menikah","Menikah"),("Belum Menikah","Belum Menikah")])
 	religion = 	StringField("Agama",validators=[Length(max=100)])
-	image = FileField("Upload photo",validators=[FileAllowed(images,"Images Only")])
+
 
 
 class AddReviewForm(FlaskForm):
@@ -77,6 +77,20 @@ class AddAttendanceForm(FlaskForm):
 
 
 
+
+
+class OwnerRegisterForm(FlaskForm):
+	username = StringField("Username",validators=[InputRequired(),Length(max=100)])
+	email = StringField("Email",validators=[InputRequired(),Length(max=100),Email()])
+	password = PasswordField("Password",validators=[InputRequired(),Length(min=6,max=100)])
+	double = PasswordField("Password Lage",validators=[InputRequired(),Length(min=6,max=100)])
+
+
+
+class OwnerLoginForm(FlaskForm):
+	username = StringField("Username",validators=[InputRequired(),Length(max=100)])	
+	password = PasswordField("Password",validators=[InputRequired(),Length(min=6,max=100)])
+	double = PasswordField("Password Lage",validators=[InputRequired(),Length(min=6,max=100)])
 
 
 

@@ -32,7 +32,7 @@
 						<div class="col-xs-12 col-sm-3 center">
 							<span class="profile-picture">
 								<a href="/dashboard/edit-photo/{{employe.id}}">
-								<img class="editable img-responsive" alt=" Avatar" id="avatar2" src="http://easyhrd.com/static/img/profile/{{employe.image_name}}">
+								<img class="editable img-responsive" alt=" Avatar" id="avatar2" src="http://127.0.0.1:5000/static/img/profile/{{employe.image_name}}">
 								</a>
 							</span>
 
@@ -41,6 +41,10 @@
 							<a href="/dashboard/edit-employe/{{ employe.id }}" class="btn btn-sm btn-block btn-primary">
 								<i class="ace-icon fa fa-pencil bigger-120"></i>
 								<span class="bigger-110">Edit</span>
+							</a>
+							<a href="/dashboard/edit-photo/{{ employe.id }}" class="btn btn-sm btn-block btn-primary">
+								<i class="ace-icon fa fa-camera bigger-120"></i>
+								<span class="bigger-110">Change Image</span>
 							</a>
 
 							<button type="button" class="btn btn-sm btn-block btn-danger" onclick="myFunction()">
@@ -171,19 +175,31 @@
 								{% if current_user.id == review.reviewer_id %}
 								<div class="tools action-buttons">
 									
-									<a href="/dashboard/delete-review/{{ review.id}}" class="red">
+									<a onclick="myReview()" class="red">
 										<i class="ace-icon fa fa-times bigger-125"></i>
 									</a>
 								</div>	
 								{% elif current_user.role == "user" %}	
 								<div class="tools action-buttons">
 									
-									<a href="/dashboard/delete-review/{{ review.id}}" class="red">
+									<a onclick="myReview()" class="red">
 										<i class="ace-icon fa fa-times bigger-125"></i>
 									</a>
 								</div>							
 								{% else %}
 								{% endif %}
+								<script>
+								function myReview() {
+								    var x = window.confirm("Are You Sure ?");
+								        if(x){
+								            window.location = '/dashboard/delete-review/{{ review.id}}' ;
+								        }
+								        else {
+								            return false;
+								          }
+								        }    
+								</script>
+
 							</div>
 							{% endfor %}
 						</div><!-- /.col -->
