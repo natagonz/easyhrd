@@ -210,8 +210,10 @@ def UserRegister():
 		else :	
 			db.session.add(user)
 			db.session.commit()
+			log = User.query.filter_by(email=form.email.data).first()
+			login_user(log)
 			flash("Anda berhasil mendaftar","success")
-			return redirect(url_for("UserLogin"))
+			return redirect(url_for("UserDashboard"))
 	return render_template("user/register.html",form=form)	
 
 
