@@ -1,6 +1,6 @@
 from flask import Flask , render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy 
-from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm,ConfirmPaymentForm
+from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm,ConfirmPaymentForm,OwnerEditUserForm,OwnerEditConfirmForm,UserEditAccountForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from flask_login import LoginManager , UserMixin, login_user, login_required, logout_user, current_user
@@ -8,7 +8,9 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer,SignatureExpired
 from flask_uploads import UploadSet, IMAGES, configure_uploads
 from config import database,secret
-
+from functools import wraps
+from flask_migrate import Migrate,MigrateCommand
+from flask_script import Manager 
 
 
 
@@ -17,6 +19,11 @@ app.config["SQLALCHEMY_DATABASE_URI"] = database
 app.config["SECRET_KEY"] = secret
 db = SQLAlchemy(app)
 app.debug = True
+
+migrate = Migrate(app, db)
+manager = Manager(app)
+manager.add_command('db',MigrateCommand) 
+
 
 
 
@@ -89,6 +96,7 @@ class Employe(db.Model):
 	gender = db.Column(db.String(100))
 	status = db.Column(db.String(100))
 	religion = db.Column(db.String(100))
+	notes = db.Column(db.UnicodeText())
 	owner_id = db.Column(db.Integer(),db.ForeignKey("user.id"))
 	image_name = db.Column(db.String(200))
 	reviews = db.relationship("Review",backref="reviews",lazy="dynamic")
@@ -127,17 +135,45 @@ class Confirm(db.Model):
 	to_bank = db.Column(db.String(200))
 	bank_account = db.Column(db.String(200))
 	date = db.Column(db.DateTime()) 	
+	status = db.Column(db.String(200))
 
 
 
-
-
-
+############ wrapper #################
 #user loader
 @login_manager.user_loader
 def user_loader(user_id):
 	return User.query.get(int(user_id))
 
+
+#mengatur role 
+def roles_required(role="ANY"):
+    def wrapper(fn):
+        @wraps(fn)
+        def decorated_view(*args, **kwargs):
+            if ((current_user.role != role) and (role != "ANY")):
+                return "no access"
+            return fn(*args, **kwargs)
+        return decorated_view
+    return wrapper
+
+
+###################### Error Handler #########################
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("error/404.html")
+
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template("error/500.html")
+
+
+
+
+
+
+############### app route ###########################    
 
 
 
@@ -181,12 +217,117 @@ def OwnerLogin():
 
 @app.route("/admin/dashboard",methods=["GET","POST"])
 @login_required
+@roles_required(role="SuperUser")
 def OwnerDashboard():
-	users = len(User.query.all())
+	users = len(User.query.filter_by(role="user").all())
 	trial = len(User.query.filter_by(status="trial").all())
 	pending = len(User.query.filter_by(status="pending").all())
 	active = len(User.query.filter_by(status="active").all())	
 	return render_template("admin/dashboard.html",users=users,trial=trial,pending=pending,active=active)
+
+
+@app.route("/admin/dashboard/all-user",methods=["GET","POST"])
+@login_required
+@roles_required(role="SuperUser")
+def AllUser():
+	users = User.query.filter_by(role="user").all()
+	return render_template("admin/users.html",users=users)
+
+
+
+@app.route("/admin/dashboard/trial-user",methods=["GET","POST"])
+@login_required
+@roles_required(role="SuperUser")
+def TrialUser():
+	users = User.query.filter_by(status="trial").all()
+	return render_template("admin/users.html",users=users)
+
+
+@app.route("/admin/dashboard/pending-user",methods=["GET","POST"])
+@login_required
+@roles_required(role="SuperUser")
+def PendingUser():
+	users = User.query.filter_by(status="pending").all()
+	return render_template("admin/users.html",users=users)
+
+
+@app.route("/admin/dashboard/active-user",methods=["GET","POST"])
+@login_required
+@roles_required(role="SuperUser")
+def ActiveUser():
+	users = User.query.filter_by(status="active").all()
+	return render_template("admin/users.html",users=users)
+
+
+
+@app.route("/admin/dashboard/edit-user/<string:id>",methods=["GET","POST"])
+@login_required
+@roles_required(role="SuperUser")
+def OwnerEditUser(id):
+	user = User.query.filter_by(id=id).first()
+	form = OwnerEditUserForm()		
+	form.renew.data = user.renew_date 
+	form.status.data = user.status
+	if form.validate_on_submit():
+		renew = datetime.strptime(request.form["renew"], '%m/%d/%Y').strftime('%Y-%m-%d')	
+		user.renew_date = renew
+		user.status = request.form["status"] 
+		db.session.commit()
+		flash("User berhasil di edit","success")
+		return redirect(url_for("AllUser"))
+	return render_template("admin/edit_user.html",form=form,user=user)	
+
+
+
+
+
+@app.route("/admin/dashboard/delete-user/<string:id>",methods=["GET","POST"])
+@login_required
+@roles_required(role="SuperUser")
+def OwnerDeleteUser(id):
+	user = User.query.filter_by(id=id).first()
+	db.session.delete(user)
+	db.session.commit()
+	flash("User berhasil di hapus","success")
+	return redirect(url_for("OwnerDashboard"))
+
+
+
+@app.route("/admin/dashboard/confirm",methods=["GET","POST"])
+@login_required
+@roles_required(role="SuperUser")
+def PaymentConfirmFromUser():
+	confirms = Confirm.query.all()
+	return render_template("admin/all_confirm.html",confirms=confirms)
+
+
+@app.route("/admin/dashboard/edit-confirm/<string:id>",methods=["GET","POST"])
+@login_required
+@roles_required(role="SuperUser")
+def OwnerEditConfirm(id):	
+	form = OwnerEditConfirmForm()
+	confirm = Confirm.query.filter_by(id=id).first()
+	useremail = confirm.email
+	user = User.query.filter_by(email=useremail).first()
+	form.status.data = confirm.status
+	if form.validate_on_submit():
+		status = request.form["status"]
+		confirm.status = status
+		if status == "paid":
+			user.status = "active"
+			db.session.commit()
+			flash("Status berhasil di perbaharui","success")
+			return redirect(url_for("PaymentConfirmFromUser"))
+		else :
+			user.status = "pending"	
+			db.session.commit()
+			flash("Status berhasil di perbaharui","success")
+			return redirect(url_for("PaymentConfirmFromUser"))			
+	return render_template("admin/edit_confirm.html",form=form)	
+
+
+
+
 
 
 
@@ -322,9 +463,52 @@ def UserDashboard():
 
 
 
+
+######################## User Account #####################
+@app.route("/dashboard/edit-account",methods=["GET","POST"])
+@login_required
+def UserEditAccount():
+	user = current_user
+	form = UserEditAccountForm()
+	form.username.data = user.username
+	form.company.data = user.company
+	form.phone.data = user.phone
+	form.email.data = user.email
+	if form.validate_on_submit():
+		useremail = request.form["email"]
+		check_email = User.query.filter_by(email=useremail).all()
+		if len(check_email) > 0 :
+			if user.email == useremail :	
+				user.username = request.form["username"]
+				user.company = request.form["company"]
+				user.phone = request.form["phone"]
+				user.email = useremail
+				db.session.commit()
+				flash("Profile berhasil di perbaharui","success")
+				return redirect(url_for("UserDashboard"))
+			else :	
+				flash("Email telah terdaftar,silakan pakai email lain","danger")		
+		else :	  
+			user.username = request.form["username"]
+			user.company = request.form["company"]
+			user.phone = request.form["phone"]
+			user.email = useremail
+			db.session.commit()
+			flash("Profile berhasil di perbaharui","success")
+			return redirect(url_for("UserDashboard"))
+	return render_template("user/edit_account.html",form=form)	
+
+
+
+
+
+
+
+
 ################ Admin Route ############################### 
 @app.route("/dashboard/admin",methods=["GET","POST"])
 @login_required
+@roles_required(role="user")
 def AllAdmin():
 	admins = User.query.filter_by(users=current_user.id).all()
 	return render_template("user/all_admin.html",admins=admins)
@@ -333,6 +517,7 @@ def AllAdmin():
 
 @app.route("/dashboard/add-admin",methods=["GET","POST"])
 @login_required
+@roles_required(role="user")
 def AddAdmin():
 	form = UserRegisterForm()
 	if form.validate_on_submit():
@@ -351,6 +536,7 @@ def AddAdmin():
 
 @app.route("/dashboard/delete-admin/<string:id>",methods=["GET","POST"])
 @login_required
+@roles_required(role="user")
 def DeleteAdmin(id):	
 	admin = User.query.filter_by(id=id).first()
 	if current_user.id == admin.users :
@@ -363,7 +549,6 @@ def DeleteAdmin(id):
 
 
 
-
 ############################## Employe Route ###################################
 @app.route("/dashboard/add-employe",methods=["GET","POST"])
 @login_required
@@ -371,13 +556,13 @@ def AddEmploye():
 	form = AddEmployeForm()
 	if form.validate_on_submit():
 		if current_user.role == "user":				
-			employe = Employe(name=form.name.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,skill=form.skill.data,salary=form.salary.data,added=form.added.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,owner_id=current_user.id,image_name="avatar.png")	
+			employe = Employe(name=form.name.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,skill=form.skill.data,salary=form.salary.data,added=form.added.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,owner_id=current_user.id,image_name="avatar.png",notes=form.notes.data)	
 			db.session.add(employe)
 			db.session.commit()
 			flash("Data pegawai berhasil di tambah","success")
 			return redirect(url_for("AllEmploye"))
 		else :
-			employe = Employe(name=form.name.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,skill=form.skill.data,salary=form.salary.data,added=form.added.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,owner_id=current_user.users,image_name="avatar.png")	
+			employe = Employe(name=form.name.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,skill=form.skill.data,salary=form.salary.data,added=form.added.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,owner_id=current_user.users,image_name="avatar.png",notes=form.notes.data)	
 			db.session.add(employe)
 			db.session.commit()
 			flash("Data pegawai berhasil di tambah","success")
@@ -475,6 +660,7 @@ def EditEmploye(id):
 		form.gender.data = employe.gender
 		form.status.data = employe.status
 		form.religion.data = employe.religion
+		form.notes.data = employe.notes
 		if form.validate_on_submit():
 			birthday = datetime.strptime(request.form["birth"], '%m/%d/%Y').strftime('%Y-%m-%d')	
 			add = datetime.strptime(request.form["added"], '%m/%d/%Y').strftime('%Y-%m-%d')
@@ -490,6 +676,7 @@ def EditEmploye(id):
 			employe.gender = request.form["gender"]
 			employe.status = request.form["status"]
 			employe.religion = request.form["religion"]
+			employe.notes = request.form["notes"]
 			db.session.commit()
 			flash("Data berhasil di edit","success")
 			return redirect(url_for("AllEmploye"))
@@ -532,7 +719,7 @@ def AddAttendance():
 			db.session.add(atten)
 			db.session.commit()
 			flash("Data cuti berhasil di tambah","success")
-			return redirect(url_for("UserDashboard"))
+			return redirect(url_for("AllAttendance"))
 		else :
 			atten = Attendance(name=form.name.data,departement=form.departement.data,start=form.start.data,end=form.end.data,reason=form.reason.data,status=form.status.data,atten_id=current_user.users)
 			db.session.add(atten)
@@ -616,6 +803,13 @@ def UserInvoice():
 	return render_template("user/invoice.html",user=user)	
 
 
+@app.route("/dashboard/renew/invoice",methods=["GET","POST"])
+@login_required
+def RenewInvoice():
+	user = User.query.filter_by(id=current_user.id).first()
+	tempo = user.renew_date + timedelta(days=30)
+	return render_template("user/renew_invoice.html",user=user,tempo=tempo)	
+
 
 
 @app.route("/dashboard/konfirmasi",methods=["GET","POST"])
@@ -624,7 +818,7 @@ def PaymentConfirm():
 	form = ConfirmPaymentForm()
 	if form.validate_on_submit():
 		today = datetime.today()
-		pay = Confirm(username=current_user.username,email=current_user.email,from_bank=form.from_bank.data,to_bank=form.to_bank.data,bank_account=form.bank_account.data,date=today)
+		pay = Confirm(username=current_user.username,email=current_user.email,from_bank=form.from_bank.data,to_bank=form.to_bank.data,bank_account=form.bank_account.data,date=today,status="pending")
 		db.session.add(pay)
 		db.session.commit()
 		flash("Terima Kasih,Konfirmasi anda telah kami terima","success")
@@ -635,4 +829,5 @@ def PaymentConfirm():
 
 
 if __name__ == "__main__":
+	#manager.run()
 	app.run(host='0.0.0.0')

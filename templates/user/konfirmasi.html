@@ -2,6 +2,50 @@
 
 {% block title %} Dashboard {% endblock%}
 
+{% block pendinguser %}
+<div class="row">                
+                  <div class="col-lg-11 col-md-10">
+                        <div class="card">
+                            <div class="header">                                
+                                <h4 class="title">Konfirmasi Pembayaran</h4>
+                            </div>
+                            <div class="content">
+
+                            {% from "includes/_formhelpers.html" import render_field %}
+                               <form method="POST" enctype="multipart/form-data">
+                               {{ form.hidden_tag() }}
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.from_bank, class="form-control",placeholder="Nama Bank Anda")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.bank_account, class="form-control",placeholder="Nama Pemilik Rekening")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.to_bank, class="form-control",placeholder="Password")}}
+                                            </div>
+                                        </div>
+                                    </div>                                            
+                                                                     
+                                                                 
+                                   <div class="text-center">
+                                        <button type="submit" class="btn btn-info btn-fill btn-wd">Simpan</button>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+            
+          </div>
+{% endblock %}
+
 
 {% block content %}
 <div class="row">                

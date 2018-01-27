@@ -1,0 +1,54 @@
+{% extends "layouts/dashboardtemplate.html" %}
+{% block title %} Admin {% endblock %}
+
+
+{% block content %}
+<link href="{{url_for ('static',filename='css/social_float.css')}}" rel="stylesheet"/>
+<div class="container"> 
+<div class="row">                
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="content">
+              <div class="table-responsive"> 
+
+            <table class="table"> 
+                <thead>
+                <tr>
+                    <td>user</td>
+                    <td>email</td>  
+                    <td>bank pengirim</td>
+                    <td>nama pendirim</td>
+                    <td>bank tujuan</td> 
+                    <td>status</td>
+                    <td></td>                                     
+                </tr>
+                </thead>
+
+                {% for confirm in confirms  %}
+                    <tbody>
+                        <tr>
+                            <td>{{ confirm.username }}</td>
+                            <td>{{ confirm.email }}</td>  
+                            <td>{{ confirm.from_bank }}</td>  
+                            <td>{{ confirm.bank_account }}</td>  
+                            <td>{{ confirm.to_bank }}</td> 
+                            <td>{{ confirm.status }} </td>
+                            <td><a href="/admin/dashboard/edit-confirm/{{ confirm.id }}" class="btn btn-info">edit</a></td>                          
+                        </tr>
+                     </tbody>           
+                            
+                {% endfor %}
+
+
+
+
+
+                      </table>
+                 </div>     
+               </div>  
+          </div>            
+     </div>       
+</div>
+</div>
+
+{% endblock %}

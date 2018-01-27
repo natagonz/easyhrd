@@ -1,0 +1,69 @@
+{% extends "layouts/dashboardtemplate.html" %}
+
+{% block title %} Dashboard {% endblock%}
+
+
+{% block content %}
+<div class="row">                
+                  <div class="col-lg-11 col-md-10">
+                        <div class="card">
+                            <div class="header">                            	
+							    <h4 class="title">Edit Account</h4>
+                            </div>
+                            <div class="content">
+
+                           	{% from "includes/_formhelpers.html" import render_field %}
+                               <form method="POST" enctype="multipart/form-data">
+               				   {{ form.hidden_tag() }}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.username, class="form-control")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.email, class="form-control")}}
+                                            </div>
+                                        </div>                                        
+                                    </div>   
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.phone, class="form-control")}}
+                                            </div>
+                                        </div>
+                                         <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.company, class="form-control")}}
+                                            </div>
+                                        </div>                                              
+                                    </div>        
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-info btn-fill btn-wd">Simpan</button>
+                                        <a href="/dashboard/reset-password" class="btn btn-primary btn-fill btn-wd">Reset Password</a>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+			
+          </div>
+
+
+
+	
+			
+              
+
+
+
+
+
+
+
+
+
+{% endblock %}

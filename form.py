@@ -20,8 +20,18 @@ class SuperuserRegisterForm(FlaskForm):
 	phone = StringField("Phone",validators=[Length(max=100),InputRequired()])
 	company = StringField("Perusahaan",validators=[Length(max=100),InputRequired()])
 
+class OwnerEditUserForm(FlaskForm):
+	renew = DateField("Renew date",format="%m/%d/%Y")
+	status = SelectField("Status",choices= [("trial","trial"),("pending","pending"),("active","active")])
 
+class OwnerEditConfirmForm(FlaskForm):
+	status = SelectField("Status",choices= [("pending","pending"),("paid","paid")])
 
+class UserEditAccountForm(FlaskForm):
+	username = StringField("Username",validators=[InputRequired(),Length(max=100)])
+	email = StringField("Email",validators=[InputRequired(),Length(max=100),Email()])	
+	phone = StringField("Phone",validators=[Length(max=100),InputRequired()])
+	company = StringField("Perusahaan",validators=[Length(max=100),InputRequired()])
 
 
 class UserLoginForm(FlaskForm):
@@ -49,6 +59,7 @@ class AddEmployeForm(FlaskForm):
 	gender = SelectField("Jenis Kelamin",choices= [("Laki Laki","Laki Laki"),("Perempuan","Perempuan")])
 	status = SelectField("Status",choices= [("Menikah","Menikah"),("Belum Menikah","Belum Menikah")])
 	religion = 	StringField("Agama",validators=[Length(max=100)])
+	notes = TextAreaField("Info Tambahan")
 
 
 

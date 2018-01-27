@@ -1,0 +1,58 @@
+{% extends "layouts/dashboardtemplate.html" %}
+
+{% block title %} Dashboard {% endblock%}
+
+
+{% block content %}
+<div class="row">                
+                  <div class="col-lg-11 col-md-10">
+                        <div class="card">
+                            <div class="header">                                
+                                <h4 class="title">Edit User : {{ user.username }} </h4>
+                            </div>
+                            <div class="content">
+
+                            {% from "includes/_formhelpers.html" import render_field %}
+                               <form method="POST" enctype="multipart/form-data">
+                               {{ form.hidden_tag() }}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.renew, class="form-control dtpick")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.status, class="form-control")}}
+                                            </div>
+                                        </div>
+                                       
+                                    </div>                                            
+                                                                     
+                                                                 
+                                   <div class="text-center">
+                                        <button type="submit" class="btn btn-info btn-fill btn-wd">Simpan</button>
+                                        <button type="button" class="btn btn-danger btn-fill btn-wd" onclick="myFunction()">Delete</button>                                      
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+            
+          </div>
+
+            <script>
+            function myFunction() {
+                var x = window.confirm("Are You Sure ?");
+                    if(x){
+                        window.location = '/admin/dashboard/delete-user/{{ user.id }}' ;
+                    }
+                    else {
+                        return false;
+                      }
+                    }    
+            </script>
+
+{% endblock %}

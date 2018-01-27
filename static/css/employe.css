@@ -30,6 +30,19 @@
     vertical-align: middle
 }
 
+.info-info{
+
+    text-align: right;
+    padding: 6px 10px 6px 4px;
+    font-weight: 400;
+    color: #667E99;
+    background-color: transparent;
+    width: 110px;
+    vertical-align: middle
+
+}
+
+
 .profile-info-value {
     padding: 6px 4px 6px 6px
 }

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+    
 	<meta charset="utf-8" />
 	<link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
 	<link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png">
@@ -90,6 +91,19 @@
                         <p>Konfirmasi</p>
                     </a>
                 </li>    
+            {% elif current_user.status == "pending" %}
+                <li>
+                    <a href="/dashboard/renew/invoice">
+                        <i class="ti-bell"></i>
+                        <p>Invoice</p>
+                    </a>
+                </li>  
+                <li>
+                    <a href="/dashboard/konfirmasi">
+                        <i class="ti-email"></i>
+                        <p>Konfirmasi</p>
+                    </a>
+                </li>    
             {% elif current_user.role == "user" %}
                 <li>
                     <a href="/dashboard">
@@ -126,7 +140,45 @@
                         <i class="ti-email"></i>
                         <p>Konfirmasi</p>
                     </a>
-                </li>        
+                </li>  
+            <!-- untuk admin -->
+            {% elif current_user.role == "SuperUser" %}   
+                <li>
+                    <a href="/admin/dashboard">
+                        <i class="ti-panel"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/dashboard/all-user">
+                        <i class="ti-user"></i>
+                        <p>All User</p>
+                    </a>
+                </li> 
+                <li>
+                    <a href="/admin/dashboard/trial-user">
+                        <i class="ti-user"></i>
+                        <p>Trial User</p>
+                    </a>
+                </li> 
+                 <li>
+                    <a href="/admin/dashboard/pending-user">
+                        <i class="ti-user"></i>
+                        <p>Pending User</p>
+                    </a>
+                </li> 
+                 <li>
+                    <a href="/admin/dashboard/active-user">
+                        <i class="ti-user"></i>
+                        <p>Active User</p>
+                    </a>
+                </li> 
+                <li>
+                    <a href="/admin/dashboard/confirm">
+                        <i class="ti-money"></i>
+                        <p>Payment</p>
+                    </a>
+                </li>       
             {% else %}   
                  <li>
                     <a href="/dashboard">
@@ -188,15 +240,29 @@
 
 
         <div class="content">
-            <div class="container-fluid">
-             {% if current_user.status == "trial" %}
-                <div class="alert alert-warning" role="alert">
-                    Anda dalam periode trial sampai {{current_user.start_date.strftime("%d/%m/%Y") }} Silakan bayar <a href="/dashboard/invoice">disini</a>  
-                </div>
-            {% endif %}
-               {% include "includes/_message.html" %}
-               {% block content %}
-               {% endblock %}
+            <div class="container-fluid">  
+            {% if current_user.status == "pending" %}  
+            {% include "includes/_message.html" %}
+            <div class="alert alert-warning" role="alert">
+                    Akun anda berada dalam status pending karena masa berlangganan anda telah habis,Silakan bayar <a href="/dashboard/renew/invoice">disini</a> Akun beserta data akan di hapus bila dalam 30 hari belum melakukan pembayaran.    
+            </div>
+                {% block pendinguser %}
+                {% endblock %}  
+
+            {% else %}  
+                 {% if current_user.status == "trial" %}
+                    <div class="alert alert-warning" role="alert">
+                        Anda dalam periode trial sampai {{current_user.start_date.strftime("%d/%m/%Y") }} Silakan bayar <a href="/dashboard/invoice">disini</a> 
+                    </div>   
+                  {% endif %}
+
+                  {% include "includes/_message.html" %}
+                  {% block content %}
+                      
+                  {% endblock %}           
+           
+                
+            {% endif %}   
             </div>
         </div>
 
@@ -212,20 +278,7 @@
 
     </div>
 </div>
-<!-- tawkto -->
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/5a6168ff4b401e45400c3681/default';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
+
 
 </body>
 

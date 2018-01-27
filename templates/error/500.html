@@ -1,0 +1,29 @@
+{% extends "layouts/layout.html" %}
+
+{% block title %} internal server error {% endblock%}
+
+
+{% block content %}
+<link href="{{url_for ('static',filename='css/error/404.css')}}" rel="stylesheet"/>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="error-template">
+               <h2>Internal Server Error </h2>
+                <div class="error-details">
+                   Mohon maaf,Mungkin ada kesalahan dari server kami atau mungkin anda upload melebihi 15 MB. Tolong di ulangi lagi
+                </div>
+                <div class="error-details">
+                    Sorry, the server encountered something unexpected,that didn't allow it to complete the request. We apologize. Please don't upload file more than 15 mb. If the error occurred again,please contact us.  
+                </div>
+                <div class="error-actions">
+                    <a href="/" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-home"></span>
+                        Take Me Home </a><a href="mailto:easyhrd.com@gmail.com" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-envelope"></span> easyhrd.com@gmail.com </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
