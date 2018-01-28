@@ -3,3 +3,4 @@ config.py
 *.pyc
 easyhrd.sock
 /static/img/profile/*
+/migrations
