@@ -1,6 +1,6 @@
 from flask import Flask , render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy 
-from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm,ConfirmPaymentForm,OwnerEditUserForm,OwnerEditConfirmForm,UserEditAccountForm
+from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm,ConfirmPaymentForm,OwnerEditUserForm,OwnerEditConfirmForm,UserEditAccountForm,AddBlogPostForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from flask_login import LoginManager , UserMixin, login_user, login_required, logout_user, current_user
@@ -136,6 +136,17 @@ class Confirm(db.Model):
 	bank_account = db.Column(db.String(200))
 	date = db.Column(db.DateTime()) 	
 	status = db.Column(db.String(200))
+
+
+
+class Blog(db.Model):
+	id = db.Column(db.Integer,primary_key=True)
+	date = db.Column(db.DateTime())
+	slug = db.Column(db.String(200))
+	title = db.Column(db.String(200))
+	body = db.Column(db.UnicodeText())
+	image = db.Column(db.String(300))
+
 
 
 
@@ -824,6 +835,62 @@ def PaymentConfirm():
 		flash("Terima Kasih,Konfirmasi anda telah kami terima","success")
 		return redirect(url_for("UserDashboard"))
 	return render_template("user/konfirmasi.html",form=form)
+
+
+
+
+
+
+
+
+################################### Blog ############################################################
+# front page blog
+@app.route("/blog",methods=["GET","POST"])
+def AllBlog():
+	blogs = Blog.query.all()
+	return render_template("blog/front_page.html",blogs=blogs)
+
+
+@app.route("/add-blog",methods=["GET","POST"])
+@login_required
+@roles_required(role="SuperUser")
+def AddBlog():
+	form = AddBlogPostForm()
+	if form.validate_on_submit():
+		today = datetime.today()
+		filename = images.save(form.image.data)
+		blog = Blog(title=form.title.data,body=form.body.data,slug=form.slug.data,date=today,image=filename)
+		db.session.add(blog)
+		db.session.commit()
+		flash("bloger","success")
+		return redirect(url_for("AllBlog"))
+	return render_template("blog/add_blog.html",form=form)
+
+@app.route("/blog/<slug>",methods=["GET","POST"])
+def Post(slug):
+	blog = Blog.query.filter_by(slug=slug).first()
+	return render_template("blog/post.html",blog=blog)
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

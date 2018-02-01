@@ -110,6 +110,11 @@ class ConfirmPaymentForm(FlaskForm):
 
 
 
+class AddBlogPostForm(FlaskForm):
+	title = StringField("Title",validators=[InputRequired(),Length(max=200)])
+	slug = StringField("Slug",validators=[InputRequired(),Length(max=200)])
+	body = TextAreaField("Body")
+	image = FileField("Upload photo",validators=[FileAllowed(images,"Images Only")])
 
 
 
