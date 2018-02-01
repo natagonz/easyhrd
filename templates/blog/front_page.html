@@ -81,12 +81,12 @@
         {% for blog in blogs %}
         <div class="col-lg-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="/blog/{{ blog.slug}}"><img class="card-img-top" src="http://127.0.0.1:5000/static/img/profile/{{blog.image}}" alt=""></a>
+            <a href="/blog/{{ blog.slug}}"><img class="card-img-top" src="http://easyhrd.com/static/img/profile/{{blog.image}}" alt=""></a>
             <div class="card-body">
               <h4 class="card-title">
                 <a href="/blog/{{ blog.slug}}">{{ blog.title }}</a>
               </h4>
-              <p class="card-text">L{{ blog.body|striptags|truncate(200) }}</p>
+              <p class="card-text">{{ blog.body|striptags|truncate(200) }}</p>
             </div>
           </div>
         </div>
