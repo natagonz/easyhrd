@@ -7,98 +7,161 @@
 <div class="row">                
                   <div class="col-lg-11 col-md-10">
                         <div class="card">
-                            <div class="header">                            	
-							    <h4 class="title"> Edit Data Pegawai</h4>
+                            <div class="header">                                
+                                <h4 class="title">Edit Data Pegawai</h4>
                             </div>
                             <div class="content">
 
-                           	{% from "includes/_formhelpers.html" import render_field %}
+                            {% from "includes/_formhelpers.html" import render_field %}
                                <form method="POST" enctype="multipart/form-data">
-               				   {{ form.hidden_tag() }}
+                               {{ form.hidden_tag() }}
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 {{ render_field(form.name, class="form-control",placeholder="Nama")}}
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.nik, class="form-control",placeholder="NIK")}}
+                                            </div>
+                                        </div>
+                                    </div>    
+                                    <div class="row">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 {{ render_field(form.email, class="form-control",placeholder="Email")}}
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
-                                                {{ render_field(form.phone, class="form-control",placeholder="Nomor Telepon")}}
+                                                {{ render_field(form.phone, class="form-control",placeholder="Phone")}}
                                             </div>
                                         </div>
-                                    </div>                                                  
-                                    
-                                     <div class="row">
-                                        <div class="col-md-4">
+                                    </div>  
+                                    <div class="row">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 {{ render_field(form.departement, class="form-control",placeholder="Departement")}}
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
+                                        </div>                                        
+                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                {{ render_field(form.skill, class="form-control",placeholder="Skill")}}
+                                                {{ render_field(form.cabang, class="form-control",placeholder="Penempatan Kerja")}}
                                             </div>
+                                        </div>                                        
+                                    </div>  
+                                    <div class="row">
+                                         <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{ render_field(form.added, class="form-control dtpick",placeholder="Tanggal Masuk")}}
+                                                </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                {{ render_field(form.salary, class="form-control",placeholder="Gaji")}}
-                                            </div>
+                                        <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{ render_field(form.salary, class="form-control",placeholder="Gaji")}}
+                                                </div>
                                         </div>
-                                         
-                                       
-                                    </div> 
+                                    </div>    
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                {{ render_field(form.added, class="dtpick form-control")}}
+                                                {{ render_field(form.education, class="form-control",placeholder="Pendidikan Terakhir")}}
+                                            </div>
+                                        </div>                                        
+                                         <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.institut, class="form-control",placeholder="Nama Institusi Pendidikan")}}
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                {{ render_field(form.address, class="form-control",placeholder="Alamat")}}
+                                                {{ render_field(form.jurusan, class="form-control",placeholder="Jurusan / Program Studi")}}
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                {{ render_field(form.birth, class="dtpick form-control")}}
-                                            </div>
-                                        </div>  
-                                                                   
-                                       
-                                    </div> 
-                                      
+                                    </div>     
+                                    <hr>
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 {{ render_field(form.gender, class="form-control",placeholder="Jenis Kelamin")}}
                                             </div>
-                                        </div>  
-                                        <div class="col-md-4">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.birth, class="form-control dtpick",placeholder="Tanggal Lahir")}}
+                                            </div>
+                                        </div>
+                                    </div>  
+                                    <div class="row">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 {{ render_field(form.status, class="form-control",placeholder="Status")}}
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 {{ render_field(form.religion, class="form-control",placeholder="Agama")}}
                                             </div>
                                         </div>
-                                        
-                                    </div> 
-                                    
+                                    </div>
+                                     <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                {{ render_field(form.address, class="form-control",placeholder="Alamat")}}
+                                            </div>
+                                        </div>
+                                    </div>    
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.ktp, class="form-control",placeholder="No KTP ")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.npwp, class="form-control",placeholder="NPWP")}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.bank, class="form-control",placeholder="Nama Bank ")}}
+                                            </div>
+                                        </div>                                       
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.no_rek, class="form-control",placeholder="Nomor Rekening")}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{ render_field(form.bank_account, class="form-control",placeholder="Nama Pemilik Rekening")}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.bpjs_kesehatan, class="form-control",placeholder="BPJS Kesehatan ")}}
+                                            </div>
+                                        </div>                                       
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ render_field(form.bpjs_ketenagakerjaan, class="form-control",placeholder="BPJS Ketenagakerjaan")}}
+                                            </div>
+                                        </div>
+                                    </div>                                                                                          
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 {{ render_field(form.notes, class="form-control",placeholder="Info Tambahan",id="editor")}}
                                             </div>
                                         </div>
-                                    </div>       
-                                    
+                                    </div>    
+                                                                      
                                     
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-info btn-fill btn-wd">Simpan</button>
@@ -109,13 +172,13 @@
                         </div>
                     </div>
 
-			
+            
           </div>
 
 
 
-	
-			
+    
+            
               
 
 

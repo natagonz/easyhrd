@@ -87,8 +87,7 @@ class Employe(db.Model):
 	name = db.Column(db.String(100))
 	email = db.Column(db.String(100))
 	phone = db.Column(db.String(100))
-	departement = db.Column(db.String(100))
-	skill = db.Column(db.String(200))
+	departement = db.Column(db.String(100))	
 	salary = db.Column(db.String(100))
 	added = db.Column(db.DateTime())	
 	birth = db.Column(db.DateTime())
@@ -97,6 +96,18 @@ class Employe(db.Model):
 	status = db.Column(db.String(100))
 	religion = db.Column(db.String(100))
 	notes = db.Column(db.UnicodeText())
+	nik = db.Column(db.String(200))
+	cabang = db.Column(db.String(200))
+	education = db.Column(db.String(200))
+	institut =  db.Column(db.String(200))
+	jurusan =  db.Column(db.String(200))
+	ktp =  db.Column(db.String(200))
+	npwp =  db.Column(db.String(200))
+	bank =  db.Column(db.String(200))
+	bank_account =  db.Column(db.String(200))
+	no_rek =  db.Column(db.String(200))
+	bpjs_kesehatan =  db.Column(db.String(200))
+	bpjs_ketenagakerjaan =  db.Column(db.String(200))	
 	owner_id = db.Column(db.Integer(),db.ForeignKey("user.id"))
 	image_name = db.Column(db.String(200))
 	reviews = db.relationship("Review",backref="reviews",lazy="dynamic")
@@ -567,13 +578,13 @@ def AddEmploye():
 	form = AddEmployeForm()
 	if form.validate_on_submit():
 		if current_user.role == "user":				
-			employe = Employe(name=form.name.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,skill=form.skill.data,salary=form.salary.data,added=form.added.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,owner_id=current_user.id,image_name="avatar.png",notes=form.notes.data)	
+			employe = Employe(name=form.name.data,nik=form.nik.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,salary=form.salary.data,added=form.added.data,cabang=form.cabang.data,education=form.education.data,institut=form.institut.data,jurusan=form.jurusan.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,ktp=form.ktp.data,npwp=form.npwp.data,bank=form.bank.data,bank_account=form.bank_account.data,no_rek=form.no_rek.data,bpjs_ketenagakerjaan=form.bpjs_ketenagakerjaan.data,bpjs_kesehatan=form.bpjs_kesehatan.data,notes=form.notes.data,owner_id=current_user.id,image_name="avatar.png")	
 			db.session.add(employe)
 			db.session.commit()
 			flash("Data pegawai berhasil di tambah","success")
 			return redirect(url_for("AllEmploye"))
 		else :
-			employe = Employe(name=form.name.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,skill=form.skill.data,salary=form.salary.data,added=form.added.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,owner_id=current_user.users,image_name="avatar.png",notes=form.notes.data)	
+			employe = Employe(name=form.name.data,nik=form.nik.data,email=form.email.data,phone=form.phone.data,departement=form.departement.data,salary=form.salary.data,added=form.added.data,cabang=form.cabang.data,education=form.education.data,institut=form.institut.data,jurusan=form.jurusan.data,birth=form.birth.data,address=form.address.data,gender=form.gender.data,status=form.status.data,religion=form.religion.data,ktp=form.ktp.data,npwp=form.npwp.data,bank=form.bank.data,bank_account=form.bank_account.data,no_rek=form.no_rek.data,bpjs_ketenagakerjaan=form.bpjs_ketenagakerjaan.data,bpjs_kesehatan=form.bpjs_kesehatan.data,notes=form.notes.data,owner_id=current_user.users,image_name="avatar.png")
 			db.session.add(employe)
 			db.session.commit()
 			flash("Data pegawai berhasil di tambah","success")
@@ -660,12 +671,23 @@ def EditEmploye(id):
 	form = AddEmployeForm()
 	if current_user.id == employe.owner_id or current_user.users == employe.owner_id :
 		form.name.data = employe.name
+		form.nik.data = employe.nik
 		form.email.data = employe.email
 		form.phone.data = employe.phone
-		form.departement.data = employe.departement
-		form.skill.data = employe.skill
+		form.departement.data = employe.departement		
 		form.salary.data = employe.salary
 		form.added.data = employe.added
+		form.cabang.data = employe.cabang
+		form.education.data = employe.education
+		form.institut.data = employe.institut
+		form.jurusan.data = employe.jurusan
+		form.ktp.data = employe.ktp 
+		form.npwp.data = employe.npwp
+		form.bank.data = employe.bank
+		form.bank_account.data = employe.bank_account
+		form.no_rek.data = employe.no_rek
+		form.bpjs_kesehatan.data = employe.bpjs_kesehatan
+		form.bpjs_ketenagakerjaan.data = employe.bpjs_ketenagakerjaan
 		form.birth.data = employe.birth
 		form.address.data = employe.address
 		form.gender.data = employe.gender
@@ -678,8 +700,7 @@ def EditEmploye(id):
 			employe.name = request.form["name"]
 			employe.email = request.form["email"]
 			employe.phone = request.form["phone"]
-			employe.departement = request.form["departement"]
-			employe.skill = request.form["skill"]
+			employe.departement = request.form["departement"]			
 			employe.salary = request.form["salary"]
 			employe.added = add
 			employe.birth = birthday
@@ -688,6 +709,20 @@ def EditEmploye(id):
 			employe.status = request.form["status"]
 			employe.religion = request.form["religion"]
 			employe.notes = request.form["notes"]
+			employe.nik = request.form["nik"]
+			employe.cabang = request.form["cabang"]
+			employe.education = request.form["education"]
+			employe.institut = request.form["institut"]
+			employe.jurusan = request.form["jurusan"]
+			employe.ktp = request.form["ktp"]
+			employe.npwp = request.form["npwp"]
+			employe.bank = request.form["bank"]
+			employe.bank_account = request.form["bank_account"]
+			employe.no_rek = request.form["no_rek"]
+			employe.bpjs_kesehatan = request.form["bpjs_kesehatan"]
+			employe.bpjs_ketenagakerjaan = request.form["bpjs_ketenagakerjaan"]
+
+
 			db.session.commit()
 			flash("Data berhasil di edit","success")
 			return redirect(url_for("AllEmploye"))

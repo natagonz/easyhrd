@@ -13,7 +13,13 @@
 				<li class="active">
 					<a data-toggle="tab" href="#home">
 						<i class="green ace-icon fa fa-user bigger-120"></i>
-						Profile
+						Info Umum
+					</a>
+				</li>
+				<li>
+					<a data-toggle="tab" href="#info">
+						<i class="orange ace-icon fa fa-plus bigger-120"></i>
+						Info Tambahan
 					</a>
 				</li>
 
@@ -23,6 +29,8 @@
 						Review
 					</a>
 				</li>				
+				
+
 
 			</ul>
 
@@ -64,12 +72,21 @@
 								</div>
 
 								<div class="profile-info-row">
+									<div class="profile-info-name"> NIK </div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.nik }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
 									<div class="profile-info-name"> Email </div>
 
 									<div class="profile-info-value">
 										<span>{{ employe.email }}</span>
 									</div>
 								</div>
+
 
 								<div class="profile-info-row">
 									<div class="profile-info-name"> Telepon </div>
@@ -86,15 +103,7 @@
 									<div class="profile-info-value">
 										<span>{{ employe.departement }}</span>
 									</div>
-								</div>
-
-								<div class="profile-info-row">
-									<div class="profile-info-name"> Skill </div>
-
-									<div class="profile-info-value">
-										<span>{{ employe.skill }}</span>
-									</div>
-								</div>
+								</div>								
 
 								<div class="profile-info-row">
 									<div class="profile-info-name"> Gaji </div>
@@ -113,47 +122,36 @@
 								</div>
 
 								<div class="profile-info-row">
-									<div class="profile-info-name"> Tanggal Lahir </div>
+									<div class="profile-info-name"> Penempatan Kerja </div>
 
 									<div class="profile-info-value">
-										<span>{{ employe.birth.strftime("%d-%m-%Y") }}</span>
+										<span>{{ employe.cabang }}</span>
 									</div>
 								</div>
 
 								<div class="profile-info-row">
-									<div class="profile-info-name"> Alamat </div>
+									<div class="profile-info-name"> Pendidikan </div>
 
 									<div class="profile-info-value">
-										<i class="fa fa-map-marker light-orange bigger-110"></i>
-										<span>{{ employe.address }}</span>										
+										<span>{{ employe.education }}</span>
 									</div>
 								</div>
 
 								<div class="profile-info-row">
-									<div class="profile-info-name"> Jenis Kelamin </div>
+									<div class="profile-info-name"> Institusi </div>
 
 									<div class="profile-info-value">
-										<span>{{ employe.gender }}</span>
+										<span>{{ employe.institut }}</span>
 									</div>
 								</div>
 
 								<div class="profile-info-row">
-									<div class="profile-info-name"> Status</div>
+									<div class="profile-info-name"> Jurusan </div>
 
 									<div class="profile-info-value">
-										<span>{{ employe.status }}</span>
+										<span>{{ employe.jurusan }}</span>
 									</div>
-								</div>
-
-								<div class="profile-info-row">
-									<div class="info-info"> Info Tambahan</div>
-
-									<div class="profile-info-value">
-										<span>{{ employe.notes | safe }}</span>
-									</div>
-								</div>
-
-
+								</div>						
 								
 							</div>
 							
@@ -234,6 +232,153 @@
 					</br>
 					
 				</div><!-- /#feed -->
+
+					<div id="info" class="tab-pane">
+					<div class="row">
+						<div class="col-xs-12 col-sm-3 center">
+							<span class="profile-picture">
+								<a href="/dashboard/edit-photo/{{employe.id}}">
+								<img class="editable img-responsive" alt=" Avatar" id="avatar2" src="http://easyhrd.com/static/img/profile/{{employe.image_name}}">
+								</a>
+							</span>
+
+							<div class="space space-4"></div>
+
+							<a href="/dashboard/edit-employe/{{ employe.id }}" class="btn btn-sm btn-block btn-primary">
+								<i class="ace-icon fa fa-pencil bigger-120"></i>
+								<span class="bigger-110">Edit</span>
+							</a>
+							<a href="/dashboard/edit-photo/{{ employe.id }}" class="btn btn-sm btn-block btn-primary">
+								<i class="ace-icon fa fa-camera bigger-120"></i>
+								<span class="bigger-110">Change Image</span>
+							</a>
+
+							<button type="button" class="btn btn-sm btn-block btn-danger" onclick="myFunction()">
+								<i class="ace-icon fa fa-times bigger-110"></i>
+								<span class="bigger-110">Delete </span>
+							</button>
+						</div><!-- /.col -->
+
+						<div class="col-xs-12 col-sm-9">					
+							<div class="profile-user-info">
+								
+								<div class="profile-info-row">
+									<div class="profile-info-name"> Tanggal Lahir </div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.birth.strftime("%d-%m-%Y") }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="profile-info-name"> Alamat </div>
+
+									<div class="profile-info-value">
+										<i class="fa fa-map-marker light-orange bigger-110"></i>
+										<span>{{ employe.address }}</span>										
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="profile-info-name"> Jenis Kelamin </div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.gender }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="profile-info-name"> Status</div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.status }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="profile-info-name"> Agama</div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.religion }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="profile-info-name">KTP</div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.ktp }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="profile-info-name">NPWP</div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.npwp }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="profile-info-name">Bank</div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.bank }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="profile-info-name">Nomor Rekening</div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.no_rek }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="profile-info-name">Nama Pemilik Rekening</div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.bank_account }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="profile-info-name">BPJS Kesehatan</div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.bpjs_kesehatan }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="profile-info-name">BPJS Ketenagakerjaan</div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.bpjs_ketenagakerjaan }}</span>
+									</div>
+								</div>
+
+								<div class="profile-info-row">
+									<div class="info-info"> Info Tambahan</div>
+
+									<div class="profile-info-value">
+										<span>{{ employe.notes | safe }}</span>
+									</div>
+								</div>
+
+
+								
+							</div>
+							
+						</div><!-- /.col -->
+					</div><!-- /.row -->
+
+					<div class="space-20"></div>
+
+					
+				</div><!-- /#home -->
+
 
 				
 			</div>

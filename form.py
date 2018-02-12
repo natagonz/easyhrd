@@ -45,7 +45,7 @@ class ResetPasswordForm(FlaskForm):
 	password = PasswordField("Password",validators=[InputRequired(),Length(min=8)])	
 
 
-
+'''
 class AddEmployeForm(FlaskForm):
 	name = StringField("Nama",validators=[Length(max=100)])
 	email = StringField("Email",validators=[Length(max=100)])
@@ -61,7 +61,7 @@ class AddEmployeForm(FlaskForm):
 	religion = 	StringField("Agama",validators=[Length(max=100)])
 	notes = TextAreaField("Info Tambahan")
 
-
+'''
 
 class AddReviewForm(FlaskForm):
 	review = TextAreaField("Tulis Review")
@@ -115,6 +115,60 @@ class AddBlogPostForm(FlaskForm):
 	slug = StringField("Slug",validators=[InputRequired(),Length(max=200)])
 	body = TextAreaField("Body")
 	image = FileField("Upload photo",validators=[FileAllowed(images,"Images Only")])
+
+
+
+
+########## Employe Section #######################
+'''class AddEmployeForm(FlaskForm):
+	name = StringField("Nama",validators=[Length(max=100)])
+	email = StringField("Email",validators=[Length(max=100)])
+	phone = StringField("Telepon",validators=[Length(max=100)])
+	departement = StringField("Departement",validators=[Length(max=100)]) 
+	skill = StringField("Skill",validators=[Length(max=100)])
+	salary = StringField("Gaji",validators=[Length(max=100)])
+	added = DateField("Mulai Bekerja",format="%m/%d/%Y")
+	birth = DateField("Tanggal Lahir",format="%m/%d/%Y")
+	address = StringField("Alamat",validators=[Length(max=100)])
+	gender = SelectField("Jenis Kelamin",choices= [("Laki Laki","Laki Laki"),("Perempuan","Perempuan")])
+	status = SelectField("Status",choices= [("Menikah","Menikah"),("Belum Menikah","Belum Menikah")])
+	religion = 	StringField("Agama",validators=[Length(max=100)])
+	notes = TextAreaField("Info Tambahan")'''
+
+
+class AddEmployeForm(FlaskForm):
+	name = StringField("Nama",validators=[Length(max=100)])
+	nik = StringField("NIK",validators=[Length(max=200)]) 
+	email = StringField("Email",validators=[Length(max=100)])
+	phone = StringField("Telepon",validators=[Length(max=100)])
+	departement = StringField("Departement",validators=[Length(max=100)]) 	
+	salary = StringField("Gaji",validators=[Length(max=100)])
+	added = DateField("Mulai Bekerja",format="%m/%d/%Y")
+	cabang = StringField("Penempatan Kerja",validators=[Length(max=100)])
+	education = StringField("Pendidikan Terakhir",validators=[Length(max=100)])
+	institut = StringField("Nama Institusi Pendidikan",validators=[Length(max=200)])
+	jurusan = StringField("Jurusan / Program Studi",validators=[Length(max=200)])
+	birth = DateField("Tanggal Lahir",format="%m/%d/%Y")
+	address = TextAreaField("Alamat",validators=[Length(max=100)])
+	gender = SelectField("Jenis Kelamin",choices= [("Laki Laki","Laki Laki"),("Perempuan","Perempuan")])
+	status = SelectField("Status",choices= [("Menikah","Menikah"),("Belum Menikah","Belum Menikah")])
+	religion = 	StringField("Agama",validators=[Length(max=100)])		
+	ktp = StringField("Nomor KTP",validators=[Length(max=100)])	
+	npwp = StringField("NPWP",validators=[Length(max=200)])
+	bank = StringField("Nama Bank",validators=[Length(max=100)])
+	bank_account = StringField("Nama Pemilik Rekening",validators=[Length(max=100)])
+	no_rek = StringField("Nomor Rekening",validators=[Length(max=100)])
+	bpjs_kesehatan = StringField("BPJS Kesehatan",validators=[Length(max=200)])
+	bpjs_ketenagakerjaan = StringField("BPJS Ketenagakerjaan",validators=[Length(max=200)])
+	notes = TextAreaField("Info Tambahan")
+
+ 
+
+
+
+
+
+
 
 
 
