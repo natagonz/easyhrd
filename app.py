@@ -1,6 +1,6 @@
 from flask import Flask , render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy 
-from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm,ConfirmPaymentForm,OwnerEditUserForm,OwnerEditConfirmForm,UserEditAccountForm,AddBlogPostForm
+from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm,ConfirmPaymentForm,OwnerEditUserForm,OwnerEditConfirmForm,UserEditAccountForm,AddBlogPostForm,SearchForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from flask_login import LoginManager , UserMixin, login_user, login_required, logout_user, current_user
@@ -11,6 +11,7 @@ from config import database,secret
 from functools import wraps
 from flask_migrate import Migrate,MigrateCommand
 from flask_script import Manager 
+from sqlalchemy import or_
 
 
 
@@ -598,13 +599,30 @@ def AddEmploye():
 def AllEmploye():
 	if current_user.role == "user":
 		employer = Employe.query.filter_by(owner_id=current_user.id).all()
-		length = len(employer)
-		return render_template("user/all_employe.html",employer=employer,length=length)
+		length = len(employer)		
+		form = SearchForm()
+		if form.validate_on_submit():
+			employer = Employe.query.filter_by(name=form.search.data,owner_id=current_user.id).all()
+			len_search = len(employer)
+			if len_search == 0 :
+				flash("Maaf tidak ada pegawai yang ditemukan. Harap di cek kembali penulisan yang benar","danger")
+				return redirect(url_for("AllEmploye"))
+			else :	
+				return render_template("user/all_employe.html",employer=employer,length=length,form=form)
+		return render_template("user/all_employe.html",employer=employer,length=length,form=form)
 	else :
 		employer = Employe.query.filter_by(owner_id=current_user.users).all()
-		length = len(employer)
-		return render_template("user/all_employe.html",employer=employer,length=length)
-
+		length = len(employer)		
+		form = SearchForm()
+		if form.validate_on_submit():
+			employer = Employe.query.filter_by(name=form.search.data,owner_id=current_user.users).all()
+			len_search = len(employer)			
+			if len_search == 0 :
+				flash("Maaf tidak ada pegawai yang ditemukan. Harap di cek kembali penulisan yang benar","danger")
+				return redirect(url_for("AllEmploye"))
+			else :	
+				return render_template("user/all_employe.html",employer=employer,length=length,form=form)
+		return render_template("user/all_employe.html",employer=employer,length=length,form=form)
 
 
 @app.route("/dashboard/employe/<string:id>",methods=["GET","POST"])

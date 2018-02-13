@@ -235,3 +235,8 @@ h5 a {
 }
 
 #social_side_links li a:hover img {background: rgba(0, 0, 0, .2);}
+}
+
+#sub{
+  margin-top : 27px;
+}

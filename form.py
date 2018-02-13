@@ -45,6 +45,10 @@ class ResetPasswordForm(FlaskForm):
 	password = PasswordField("Password",validators=[InputRequired(),Length(min=8)])	
 
 
+class SearchForm(FlaskForm):
+	search = StringField("Cari berdasarkan nama pegawai",validators=[InputRequired(),Length(max=200)])
+
+
 '''
 class AddEmployeForm(FlaskForm):
 	name = StringField("Nama",validators=[Length(max=100)])
