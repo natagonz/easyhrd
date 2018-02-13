@@ -8,7 +8,7 @@
     <meta name="description" content="Software HRD yang paling simple untuk memudahkan anda untuk mencatat jadwal cuti dan data pegawai serta memberi review performa pegawai anda.  ">
     <meta name="author" content="">
 
-    <title>Easyhrd- Solusi Aplikasi HRD Yang Simple</title>
+    <title>Easyhrd- Solusi Aplikasi Untuk Mengelola Pegawai</title>
 
 
     <!-- Bootstrap core CSS -->
@@ -41,10 +41,7 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#about">Tentang Kami</a>
-            </li>
+          <ul class="navbar-nav ml-auto">           
             <li class="nav-item">
               <a class="nav-link js-scroll-trigger" href="#services">Fitur</a>
             </li>
@@ -73,30 +70,17 @@
         <div class="row">
           <div class="col-lg-10 mx-auto">
             <h1 class="text-uppercase">
-              <strong>Simple HRD Solution</strong>
+              <strong>Simple Employee Management Solution</strong>
             </h1>
             <hr>
           </div>
           <div class="col-lg-8 mx-auto">
-            <p class="text-faded mb-5">Aplikasi easyhrd akan membantu anda mencatat jadwal cuti dan data pegawai serta memberi review performa pegawai anda.</p>
-            <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Tentang Kami</a>
+            <p class="text-faded mb-5">Aplikasi easyhrd akan membantu anda memberi review akan performa pegawai anda. Sehingga anda tahu pegawai mana yang memberi kontribusi besar bagi perusahaan. Happy Employee Happy Company</p>
+            <a class="btn btn-primary btn-xl js-scroll-trigger" href="/register">Daftar Sekarang</a>
           </div>
         </div>
       </div>
-    </header>
-
-    <section class="bg-primary" id="about">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 mx-auto text-center">
-            <h2 class="section-heading text-white">Pantau Performa Pegawai Anda</h2>
-            <hr class="light my-4">
-            <p class="text-faded mb-4">Easyhrd dapat membantu anda memantau performa pegawai anda,menjadwalkan cuti serta memudahkan anda untuk menyimpan data pegawai. Anda bahkan dapat menambah admin untuk melakukan penginputan data,dan anda dapat mengaksesnya kapan saja dan dimana saja</p>
-            <a class="btn btn-light btn-xl js-scroll-trigger" href="#services">Fitur Kami!</a>
-          </div>
-        </div>
-      </div>
-    </section>
+    </header>   
 
     <section id="services">
       <div class="container">
@@ -112,29 +96,29 @@
           <div class="col-lg-3 col-md-6 text-center">
             <div class="service-box mt-5 mx-auto">
               <i class="fa fa-4x fa fa-id-card text-primary mb-3 "></i>
-              <h3 class="mb-3">Unlimited Employe</h3>
-              <p class="text-muted mb-0">Anda bebas menambahkan data karyawan sebanyak banyaknya</p>
+              <h3 class="mb-3">Unlimited Data</h3>
+              <p class="text-muted mb-0">Anda bebas menambahkan data pegawai dan data cuti sebanyak banyaknya.</p>
             </div>
           </div>
           <div class="col-lg-3 col-md-6 text-center">
             <div class="service-box mt-5 mx-auto">
-              <i class="fa fa-4x fa-calendar text-primary mb-3"></i>
-              <h3 class="mb-3">Unlimited Data</h3>
-              <p class="text-muted mb-0">Anda dapat mencatat data cuti anda sebanyak mungkin</p>
+              <i class="fa fa-4x fa-star text-primary mb-3"></i>
+              <h3 class="mb-3">Performance Review</h3>
+              <p class="text-muted mb-0">Anda dapat memberikan review performa tiap pegawai yang anda miliki.</p>
             </div>
           </div>
           <div class="col-lg-3 col-md-6 text-center">
             <div class="service-box mt-5 mx-auto">
               <i class="fa fa-4x fa-user text-primary mb-3"></i>
               <h3 class="mb-3">Add Admin</h3>
-              <p class="text-muted mb-0">Anda dapat menambah akun admin yang bertugas melakukan input data</p>
+              <p class="text-muted mb-0">Anda dapat menambah akun admin yang bertugas melakukan input data.</p>
             </div>
           </div>
           <div class="col-lg-3 col-md-6 text-center">
             <div class="service-box mt-5 mx-auto">
               <i class="fa fa-4x fa-heart text-primary mb-3"></i>
               <h3 class="mb-3">24/7 Support</h3>
-              <p class="text-muted mb-0">Kami dengan senang hati membantu anda bila mengalami kesulitan saat memakai aplikasi</p>
+              <p class="text-muted mb-0">Kami dengan senang hati membantu anda bila mengalami kesulitan saat memakai aplikasi.</p>
             </div>
           </div>
         </div>
@@ -181,23 +165,7 @@
     <script src="{{url_for ('static',filename='vendor/scrollreveal/scrollreveal.min.js')}}" type="text/javascript"></script>
     <script src="{{url_for ('static',filename='vendor/magnific-popup/jquery.magnific-popup.min.js')}}" type="text/javascript"></script>
 
-    <!-- Custom scripts for this template -->
-    <script src="{{url_for ('static',filename='js/creative.min.js')}}" type="text/javascript"></script>
-    <script src="{{url_for ('static',filename='js/creative.js')}}" type="text/javascript"></script>
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/5a6168ff4b401e45400c3681/default';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })();
-    </script>
-    <!--End of Tawk.to Script-->
-
+  
 
   </body>
 
