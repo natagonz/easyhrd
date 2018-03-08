@@ -62,6 +62,11 @@ class DeleteAdminForm(FlaskForm):
 	submit = SubmitField("Delete")
 
 
+class SubmitForm(FlaskForm):
+	submit = SubmitField("Delete")
+
+
+
 
 
 class OwnerRegisterForm(FlaskForm):

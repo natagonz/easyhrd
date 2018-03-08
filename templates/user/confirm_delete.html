@@ -1,0 +1,41 @@
+{% extends "layouts/dashboardtemplate.html" %}
+
+{% block title %} Hapus Antrean {% endblock %}
+
+
+{% block content %}
+<div class="row">                
+                  <div class="col-lg-11 col-md-10">
+                        <div class="card">
+                            <div class="header">                            	
+							    <h4 class="title">Hapus data {{ status }} dari {{ employe.name }} </h4>
+                  <h4 class="title">Setelah tombol di klik,Data akan terhapus</h4>
+                            </div>
+                            <div class="content">
+
+                           	{% from "includes/_formhelpers.html" import render_field %}
+                               <form method="POST" enctype="multipart/form-data">
+               				   {{ form.hidden_tag() }}
+                                    <div class="row">
+                                                                                                                 
+                                                                        
+                                    <div>
+                                        <button type="submit" class="btn btn-danger btn-fill btn-wd"> Hapus </button>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+              </div>
+			
+          </div>
+
+
+
+
+
+
+
+
+{% endblock %}

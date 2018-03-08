@@ -1,6 +1,6 @@
 from flask import Flask , render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy 
-from form import UserRegisterForm ,UserLoginForm, AddEmployeForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm,ConfirmPaymentForm,OwnerEditUserForm,OwnerEditConfirmForm,UserEditAccountForm,AddBlogPostForm,SearchForm,AddKpiForm,AddAttendanceForm
+from form import UserRegisterForm ,UserLoginForm, AddEmployeForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm,ConfirmPaymentForm,OwnerEditUserForm,OwnerEditConfirmForm,UserEditAccountForm,AddBlogPostForm,SearchForm,AddKpiForm,AddAttendanceForm,SubmitForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from flask_login import LoginManager , UserMixin, login_user, login_required, logout_user, current_user
@@ -914,18 +914,6 @@ def EditKpi(id):
 	return render_template("kpi/employe.html",form=form,employe=employe,kpis=kpis)	
 
 
-@app.route("/dashboard/kpi/employe/delete/<string:id>",methods=["GET","POST"])
-@login_required
-def DeleteKpi(id):
-	kpi = Kpi.query.filter_by(id=id).first()
-	employe = Employe.query.filter_by(id=kpi.kpis_id).first()
-	id = employe.id	
-	db.session.delete(kpi)
-	db.session.commit()
-	flash("Kpi Berhasil Di Hapus","success")
-	return redirect(url_for("KpiPerEmploye",id=id))
-
-
 
 
 #################################### Attendance route ########################################
@@ -979,17 +967,6 @@ def EditEmployeAttenance(id):
 	return render_template("cuti/employe.html",attendances=attendances,form=form,employe=employe)
 
 
-@app.route("/dashboard/attendance/employe/delete/<string:id>",methods=["GET","POST"])
-@login_required
-def DeleteEmployeAttendance(id):	
-	atten = Attendance.query.filter_by(id=id).first()
-	employe = Employe.query.filter_by(id=atten.attens_id).first()
-	id = employe.id	
-	db.session.delete(atten)
-	db.session.commit()
-	flash("Data Cuti Berhasil Di Hapus","success")
-	return redirect(url_for("EmployeAttendance",id=id))
-
 
 @app.route("/dashboard/attendance/list",methods=["GET","POST"])
 @login_required
@@ -1000,6 +977,40 @@ def AttendanceList():
 	else :
 		attendances = Attendance.query.filter_by(attener_owner=current_user.users,status="Belum Di Setujui").all() 
 		return render_template("cuti/cuti_list.html",attendances=attendances)
+
+
+
+######################### Submit Delete ###############################
+@app.route("/dashboard/confirm/delete/<string:status>/<string:id>",methods=["GET","POST"])
+@login_required
+def ConfirmDelete(status,id):
+	if status == "cuti":
+		form = SubmitForm()
+		atten = Attendance.query.filter_by(id=id).first()
+		employe = Employe.query.filter_by(id=atten.attens_id).first()
+		id = employe.id
+		if form.validate_on_submit():		
+			db.session.delete(atten)
+			db.session.commit()
+			flash("Data Cuti Berhasil Di Hapus","success")
+			return redirect(url_for("EmployeAttendance",id=id))
+		return render_template("user/confirm_delete.html",form=form,status=status,employe=employe)		
+	elif status == "performa":
+		form = SubmitForm()
+		kpi = Kpi.query.filter_by(id=id).first()
+		employe = Employe.query.filter_by(id=kpi.kpis_id).first()
+		id = employe.id
+		if form.validate_on_submit():		
+			db.session.delete(kpi)
+			db.session.commit()
+			flash("Data Kpi Berhasil Di Hapus","success")
+			return redirect(url_for("KpiPerEmploye",id=id))
+		return render_template("user/confirm_delete.html",form=form,status=status,employe=employe)	
+	else :
+		return "Dear God,Punch This Little Fucker"
+		
+		
+
 
 
 
