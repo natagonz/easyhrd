@@ -18,19 +18,22 @@
 				</li>
 				<li>
 					<a data-toggle="tab" href="#info">
-						<i class="orange ace-icon fa fa-plus bigger-120"></i>
+						<i class="blue ace-icon fa fa-plus bigger-120"></i>
 						Info Tambahan
 					</a>
-				</li>
-
+				</li>	
 				<li>
-					<a data-toggle="tab" href="#feed">
-						<i class="orange ace-icon fa fa-pencil bigger-120"></i>
-						Review
+					<a href="/dashboard/kpi/employe/{{ employe.id }}">
+						<i class="red ace-icon fa fa-rocket bigger-120"></i>
+						Performa
 					</a>
-				</li>				
-				
-
+				</li>
+				<li>
+					<a href="/dashboard/attendance/employe/{{ employe.id }}">
+						<i class="orange ace-icon fa fa-calendar bigger-120"></i>
+						Cuti
+					</a>
+				</li>						
 
 			</ul>
 
@@ -163,75 +166,7 @@
 					
 				</div><!-- /#home -->
 
-				<div id="feed" class="tab-pane">
-					<div class="profile-feed row">
-						<div class="col-sm-12">
-							{%  for review in reviews %}								
-							<div class="profile-activity clearfix">
-								<div>
-									<i class="pull-left thumbicon fa fa-user btn-info no-hover"></i>
-									<a class="user" href="#">{{ review.posted }} </a>
-									Review : {{ review.review}}
-									
-
-									<div class="time">
-										<i class="ace-icon fa fa-clock-o bigger-110"></i>
-										{{ review.date.strftime("%d-%m-%Y") }}
-									</div>
-								</div>
-								{% if current_user.id == review.reviewer_id %}
-								<div class="tools action-buttons">
-									
-									<a onclick="myReview()" class="red">
-										<i class="ace-icon fa fa-times bigger-125"></i>
-									</a>
-								</div>	
-								{% elif current_user.role == "user" %}	
-								<div class="tools action-buttons">
-									
-									<a onclick="myReview()" class="red">
-										<i class="ace-icon fa fa-times bigger-125"></i>
-									</a>
-								</div>							
-								{% else %}
-								{% endif %}
-								<script>
-								function myReview() {
-								    var x = window.confirm("Are You Sure ?");
-								        if(x){
-								            window.location = '/dashboard/delete-review/{{ review.id}}' ;
-								        }
-								        else {
-								            return false;
-								          }
-								        }    
-								</script>
-
-							</div>
-							{% endfor %}
-						</div><!-- /.col -->
-						{% from "includes/_formhelpers.html" import render_field %}
-                               <form method="POST" enctype="multipart/form-data">
-                               {{ form.hidden_tag() }}
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                {{ render_field(form.review, class="form-control")}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                     <div class="text-left">
-                                        <button type="submit" class="btn btn-info btn-fill btn-wd">Simpan</button>
-                                    </div>
-                                    <div class="clearfix"></div>    
-                                </form>   	
-						
-					</div><!-- /.row -->
-
-					<div class="space-12"></div>
-					</br>
-					
-				</div><!-- /#feed -->
+				
 
 					<div id="info" class="tab-pane">
 					<div class="row">

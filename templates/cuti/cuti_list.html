@@ -1,0 +1,57 @@
+{% extends "layouts/dashboardtemplate.html" %}
+{% block title %} Attendance {% endblock %}
+
+
+{% block content %}
+
+<div class="row">                
+    <div class="col-lg-11 col-md-10">
+        <div class="card">
+            <div class="content">
+              <div class="table-responsive">
+
+            <table class="table"> 
+                <thead>
+                <tr>
+                    <td>Nama</td>                    
+                    <td>Departement</td>
+                    <td>Mulai</td>
+                    <td>Sampai</td> 
+                    <td>Alasan</td>   
+                    <td>Status</td> 
+                    <td></td> 
+                                
+                </tr>
+                </thead>
+                
+
+                {% for atten in attendances  %}
+                    <tbody>
+                        <tr>
+                            <td>{{ atten.name }}</td>                    
+                            <td>{{ atten.departement }}</td>
+                            <td>{{ atten.start.strftime("%d-%m-%Y") }}</td>
+                            <td>{{ atten.end.strftime("%d-%m-%Y") }}</td>
+                            <td>{{ atten.reason }}</td>
+                            <td>{{ atten.status }}</td>
+                            <td><a href="/dashboard/edit-attendance/{{ atten.id }}" class="btn btn-info">Edit</a></td>                           
+                        </tr>
+                     </tbody>      
+                      
+                            
+
+
+                {% endfor %}
+
+
+
+
+
+                      </table>
+                 </div> 
+               </div>      
+          </div>            
+     </div>       
+</div>
+
+{% endblock %}

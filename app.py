@@ -1,6 +1,6 @@
 from flask import Flask , render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy 
-from form import UserRegisterForm ,UserLoginForm, AddEmployeForm, AddAttendanceForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm,ConfirmPaymentForm,OwnerEditUserForm,OwnerEditConfirmForm,UserEditAccountForm,AddBlogPostForm,SearchForm
+from form import UserRegisterForm ,UserLoginForm, AddEmployeForm,AddReviewForm,EditPhotoForm,SuperuserRegisterForm,ForgotPasswordForm,ResetPasswordForm,OwnerRegisterForm,OwnerLoginForm,ConfirmPaymentForm,OwnerEditUserForm,OwnerEditConfirmForm,UserEditAccountForm,AddBlogPostForm,SearchForm,AddKpiForm,AddAttendanceForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from flask_login import LoginManager , UserMixin, login_user, login_required, logout_user, current_user
@@ -12,6 +12,10 @@ from functools import wraps
 from flask_migrate import Migrate,MigrateCommand
 from flask_script import Manager 
 from sqlalchemy import or_
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField ,TextAreaField, IntegerField, DateField, SelectField, SubmitField, FloatField
+from wtforms.validators import InputRequired, EqualTo, Email, Length
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 
 
@@ -63,11 +67,12 @@ class User(db.Model):
 	start_date = db.Column(db.DateTime())
 	renew_date = db.Column(db.DateTime())
 	status = db.Column(db.String(100))
-	users = db.Column(db.Integer())
+	users = db.Column(db.Integer())	
 	owner = db.relationship("Employe",backref="owner",lazy="dynamic")
 	atten = db.relationship("Attendance",backref="atten",lazy="dynamic")
 	reviewer = db.relationship("Review",backref="reviewer",lazy="dynamic")
-
+	kpier = db.relationship("Kpi",backref="kpier",lazy="dynamic")
+	attener = db.relationship("Attendance",backref="attener",lazy="dynamic")
 
 	def is_active(self):
 		return True
@@ -112,6 +117,11 @@ class Employe(db.Model):
 	owner_id = db.Column(db.Integer(),db.ForeignKey("user.id"))
 	image_name = db.Column(db.String(200))
 	reviews = db.relationship("Review",backref="reviews",lazy="dynamic")
+	kpis = db.relationship("Kpi",backref="kpis",lazy="dynamic")
+	attens = db.relationship("Attendance",backref="attens",lazy="dynamic")
+
+	def __repr__(self):
+		return '{}'.format(self.name)
 
 
 
@@ -125,7 +135,10 @@ class Attendance(db.Model):
 	end = db.Column(db.DateTime())
 	reason = db.Column(db.UnicodeText())
 	status = db.Column(db.String(100))
-	atten_id = db.Column(db.Integer(),db.ForeignKey("user.id"))
+	attens_id = db.Column(db.Integer(),db.ForeignKey("employe.id"))
+	attener_id = db.Column(db.Integer(),db.ForeignKey("user.id"))
+	attener_owner = db.Column(db.Integer())
+	date = db.Column(db.DateTime())
 
 
 
@@ -137,6 +150,20 @@ class Review(db.Model):
 	reviews_id = db.Column(db.Integer(),db.ForeignKey("employe.id"))
 	reviewer_id = db.Column(db.Integer(),db.ForeignKey("user.id"))
 	reviewer_owner = db.Column(db.Integer())
+
+
+class Kpi(db.Model):
+	id = db.Column(db.Integer,primary_key=True)
+	key = db.Column(db.UnicodeText())
+	indicator = db.Column(db.String(100))
+	target = db.Column(db.Integer())
+	complish = db.Column(db.Integer())
+	result = db.Column(db.Float())
+	date = db.Column(db.DateTime())
+	kpis_id = db.Column(db.Integer(),db.ForeignKey("employe.id"))
+	kpier_id = db.Column(db.Integer(),db.ForeignKey("user.id"))
+	kpier_owner = db.Column(db.Integer())
+
 
 
 class Confirm(db.Model):
@@ -158,6 +185,8 @@ class Blog(db.Model):
 	title = db.Column(db.String(200))
 	body = db.Column(db.UnicodeText())
 	image = db.Column(db.String(300))
+
+
 
 
 
@@ -197,9 +226,6 @@ def internal_server_error(e):
 
 
 ############### app route ###########################    
-
-
-
 @app.route("/")
 def Index():
 	return render_template("index.html")
@@ -350,12 +376,6 @@ def OwnerEditConfirm(id):
 
 
 
-
-
-
-
-
-
 ############# user ############################
 
 
@@ -477,11 +497,11 @@ def UserResetPassword():
 def UserDashboard():
 	if current_user.role == "user":
 		employe = len(Employe.query.filter_by(owner_id=current_user.id).all())
-		cuti = len(Attendance.query.filter_by(atten_id=current_user.id).all())
+		cuti = len(Attendance.query.filter_by(attener_owner=current_user.id,status="Belum Di Setujui").all())
 		return render_template("user/dashboard.html",employe=employe,cuti=cuti)
 	else :			
 		employe = len(Employe.query.filter_by(owner_id=current_user.users).all())
-		cuti = len(Attendance.query.filter_by(atten_id=current_user.users).all())
+		cuti = len(Attendance.query.filter_by(attener_owner=current_user.users,status="Belum Di Setujui").all())
 		return render_template("user/dashboard.html",employe=employe,cuti=cuti)		
 
 
@@ -629,42 +649,11 @@ def AllEmploye():
 @login_required
 def EmployeId(id):
 	employe = Employe.query.filter_by(id=id).first()
-	reviews = Review.query.filter_by(reviews_id=id).all()
-	if current_user.id == employe.owner_id or current_user.users == employe.owner_id:  
-		form = AddReviewForm()
-		if form.validate_on_submit():	
-			today = datetime.today()	
-			if current_user.role == "user" :
-				review = Review(review=form.review.data,date=today,posted=current_user.username,reviews_id=employe.id,reviewer_id=current_user.id,reviewer_owner=current_user.id)
-				db.session.add(review)
-				db.session.commit()
-				flash("Review anda berhasil di tambahkan","success")
-				return redirect(url_for("AllEmploye"))	
-			else :
-				review = Review(review=form.review.data,date=today,posted=current_user.username,reviews_id=employe.id,reviewer_id=current_user.id,reviewer_owner=current_user.users)
-				db.session.add(review)
-				db.session.commit()
-				flash("Review anda berhasil di tambahkan","success")
-				return redirect(url_for("AllEmploye"))	
+	if current_user.id == employe.owner_id or current_user.users == employe.owner_id: 
+		return render_template("user/employe.html",employe=employe)		
 	else :
 		return "No access"
-	return render_template("user/employe.html",employe=employe,form=form,reviews=reviews)
-
-
-
-@app.route("/dashboard/delete-review/<string:id>",methods=["GET","POST"])
-@login_required
-def EditReview(id):
-	review = Review.query.filter_by(id=id).first()
-	if current_user.id == review.reviewer_id or current_user.id == review.reviewer_owner :
-		db.session.delete(review)
-		db.session.commit()
-		flash("Review berhasil di hapus","success")
-		return redirect(url_for("AllEmploye"))
-	else :
-		return "no access"	
-
-
+	
 
 
 @app.route("/dashboard/delete-employe/<string:id>",methods=["GET","POST"])
@@ -763,98 +752,7 @@ def EditPhoto(id):
 		flash("Photo berhasil di rubah","success")
 		return redirect(url_for("AllEmploye"))
 	return render_template("user/edit_photo.html",form=form)	
-
-
-
-
-
-
-
-
-#################################### Attendance route ########################################
-@app.route("/dashboard/add-attendance",methods=["GET","POST"])
-@login_required
-def AddAttendance():
-	form = AddAttendanceForm()
-	user = User.query.filter_by(id=current_user.id).first()
-	if form.validate_on_submit():
-		if current_user.role == "user" :
-			atten = Attendance(name=form.name.data,departement=form.departement.data,start=form.start.data,end=form.end.data,reason=form.reason.data,status=form.status.data,atten_id=current_user.id)
-			db.session.add(atten)
-			db.session.commit()
-			flash("Data cuti berhasil di tambah","success")
-			return redirect(url_for("AllAttendance"))
-		else :
-			atten = Attendance(name=form.name.data,departement=form.departement.data,start=form.start.data,end=form.end.data,reason=form.reason.data,status=form.status.data,atten_id=current_user.users)
-			db.session.add(atten)
-			db.session.commit()
-			flash("Data cuti berhasil di tambah","success")
-			return redirect(url_for("AllAttendance"))
-				
-	return render_template("user/add_attendance.html",form=form)	
-
-
-
-
-@app.route("/dashboard/attendance",methods=["GET","POST"])
-@login_required
-def AllAttendance():
-	if current_user.role == "user" :
-		attendances = Attendance.query.filter_by(atten_id=current_user.id).all()
-		return render_template("user/all_attendance.html",attendances=attendances)
-	else :
-		attendances = Attendance.query.filter_by(atten_id=current_user.users).all()
-		return render_template("user/all_attendance.html",attendances=attendances)
-
-
-
-@app.route("/dashboard/delete-attendance/<string:id>",methods=["GET","POST"])
-@login_required
-def DeleteAttendance(id):
-	attendance = Attendance.query.filter_by(id=id).first()
-	if current_user.id == attendance.atten_id or current_user.users == attendance.atten_id :
-		db.session.delete(attendance)
-		db.session.commit()
-		flash("Data berhasil dihapus","success")
-		return redirect(url_for("AllAttendance"))
-	else :
-		return "No access"
-
-
-
-
-@app.route("/dashboard/edit-attendance/<string:id>",methods=["GET","POST"])
-@login_required
-def EdiAttendance(id):
-	attendance = Attendance.query.filter_by(id=id).first()
-	form = AddAttendanceForm()
-	if current_user.id == attendance.atten_id or current_user.users == attendance.atten_id :
-		form.name.data = attendance.name
-		form.departement.data = attendance.departement
-		form.start.data = attendance.start
-		form.end.data = attendance.end 
-		form.reason.data = attendance.reason
-		form.status.data = attendance.status
-		if form.validate_on_submit():
-			start = datetime.strptime(request.form["start"], '%m/%d/%Y').strftime('%Y-%m-%d')	
-			end = datetime.strptime(request.form["end"], '%m/%d/%Y').strftime('%Y-%m-%d')	
-			attendance.name = request.form["name"]
-			attendance.departement = request.form["departement"]
-			attendance.start = start 
-			attendance.end = end 
-			attendance.reason = request.form["reason"]
-			attendance.status = request.form["status"]
-			db.session.commit()
-			flash("Data berhasil di edit","success")
-			return redirect(url_for("AllAttendance"))
-	else :
-		return "No access"		
-	return render_template("user/edit_attendance.html",form=form)				
-
-			
-
-		
-				
+	
 	
 	
 	
@@ -927,20 +825,187 @@ def Post(slug):
 		
 
 
+################################ KPI ##########################################
+@app.route("/dashboard/kpi/employe",methods=["GET","POST"])
+@login_required
+def AllEmployeKpi():	
+	if current_user.role == "user":
+		employer = Employe.query.filter_by(owner_id=current_user.id).all()
+		length = len(employer)		
+		form = SearchForm()
+		if form.validate_on_submit():
+			employer = Employe.query.filter_by(name=form.search.data,owner_id=current_user.id).all()
+			len_search = len(employer)
+			if len_search == 0 :
+				flash("Maaf tidak ada pegawai yang ditemukan. Harap di cek kembali penulisan yang benar","danger")
+				return redirect(url_for("AllEmployeKpi"))
+			else :	
+				return render_template("kpi/all_employe.html",employer=employer,length=length,form=form)
+		return render_template("kpi/all_employe.html",employer=employer,length=length,form=form)
+	else :
+		employer = Employe.query.filter_by(owner_id=current_user.users).all()
+		length = len(employer)		
+		form = SearchForm()
+		if form.validate_on_submit():
+			employer = Employe.query.filter_by(name=form.search.data,owner_id=current_user.users).all()
+			len_search = len(employer)			
+			if len_search == 0 :
+				flash("Maaf tidak ada pegawai yang ditemukan. Harap di cek kembali penulisan yang benar","danger")
+				return redirect(url_for("AllEmployeKpi"))
+			else :	
+				return render_template("kpi/all_employe.html",employer=employer,length=length,form=form)
+		return render_template("kpi/all_employe.html",employer=employer,length=length,form=form)
+
+
+
+@app.route("/dashboard/kpi/employe/<string:id>",methods=["GET","POST"])
+@login_required
+def KpiPerEmploye(id):
+	employe = Employe.query.filter_by(id=id).first()
+	form = AddKpiForm()
+	kpis = Kpi.query.filter_by(kpis_id=employe.id).order_by(Kpi.date.desc()).all()
+	if form.validate_on_submit():
+		today = datetime.today()
+		target =form.target.data 
+		complish = form.complish.data
+		result = complish - target  
+		final = result * 100.0 / target 
+		if current_user.role == "user":
+			kpi = Kpi(key=form.key.data,indicator=form.indicator.data,target=target,complish=complish,result=final,date=today,kpis_id=employe.id,kpier_id=current_user.id,kpier_owner=current_user.id)
+			db.session.add(kpi)
+			db.session.commit()
+			flash("Input berhasil ditambah","success")
+			return redirect(url_for("KpiPerEmploye",id=id))
+		else :
+			kpi = Kpi(key=form.key.data,indicator=form.indicator.data,target=target,complish=complish,result=final,date=today,kpis_id=employe.id,kpier_id=current_user.id,kpier_owner=current_user.users)
+			db.session.add(kpi)
+			db.session.commit()
+			flash("Input berhasil di tambah","success")
+			return redirect(url_for("KpiPerEmploye",id=id))
+	return render_template("kpi/employe.html",form=form,employe=employe,kpis=kpis)
+
+
+
+@app.route("/dashboard/kpi/employe/edit/<string:id>",methods=["GET","POST"])
+@login_required
+def EditKpi(id):
+	kpi = Kpi.query.filter_by(id=id).first()
+	employe = Employe.query.filter_by(id=kpi.kpis_id).first()
+	kpis = Kpi.query.filter_by(kpis_id=employe.id).order_by(Kpi.date.desc()).all()
+	id = employe.id 
+	form = AddKpiForm()
+	form.key.data = kpi.key 
+	form.indicator.data = kpi.indicator
+	form.target.data = kpi.target
+	form.complish.data = kpi.complish
+	if form.validate_on_submit():
+		target = int(request.form["target"])
+		complish = int(request.form["complish"])
+		result = complish - target 
+		final = result * 100.0 / target
+		kpi.key = request.form["key"]
+		kpi.indicator = request.form["indicator"]
+		kpi.target = target
+		kpi.complish = complish 
+		kpi.result = final 
+		db.session.commit() 
+		flash("kpi berhasil di edit","success")
+		return redirect(url_for("KpiPerEmploye",id=id))
+	return render_template("kpi/employe.html",form=form,employe=employe,kpis=kpis)	
+
+
+@app.route("/dashboard/kpi/employe/delete/<string:id>",methods=["GET","POST"])
+@login_required
+def DeleteKpi(id):
+	kpi = Kpi.query.filter_by(id=id).first()
+	employe = Employe.query.filter_by(id=kpi.kpis_id).first()
+	id = employe.id	
+	db.session.delete(kpi)
+	db.session.commit()
+	flash("Kpi Berhasil Di Hapus","success")
+	return redirect(url_for("KpiPerEmploye",id=id))
+
+
+
+
+#################################### Attendance route ########################################
+@app.route("/dashboard/attendance/employe/<string:id>",methods=["GET","POST"])
+@login_required
+def EmployeAttendance(id):
+	employe = Employe.query.filter_by(id=id).first()
+	form = AddAttendanceForm()
+	attendances = Attendance.query.filter_by(attens_id=employe.id).order_by(Attendance.id.desc()).all()
+	if form.validate_on_submit():
+		start = form.start.data 
+		end = form.end.data 
+		today = datetime.today()
+		if current_user.role == "user":
+			cuti = Attendance(name=employe.name,departement=employe.departement,start=start,end=end,reason=form.reason.data,status=form.status.data,attens_id=employe.id,attener_id=current_user.id,attener_owner=current_user.id,date=today)
+			db.session.add(cuti)
+			db.session.commit()
+			flash("Data Cuti Berhasil Di Tambah","success")
+			return redirect(url_for("EmployeAttendance",id=id))
+		else :
+			cuti = Attendance(name=employe.name,departement=employe.departement,start=start,end=end,reason=form.reason.data,status=form.status.data,attens_id=employe.id,attener_id=current_user.id,attener_owner=current_user.users,date=today)
+			db.session.add(cuti)
+			db.session.commit()
+			flash("Data Cuti Berhasil Di Tambah","success")
+			return redirect(url_for("EmployeAttendance",id=id))
+	return render_template("cuti/employe.html",attendances=attendances,form=form,employe=employe)		
+
+
+@app.route("/dashboard/attendance/employe/edit/<string:id>",methods=["GET","POST"])
+@login_required
+def EditEmployeAttenance(id):
+	attendance = Attendance.query.filter_by(id=id).first()
+	employe = Employe.query.filter_by(id=attendance.attens_id).first()
+	attendances = Attendance.query.filter_by(attens_id=employe.id).order_by(Attendance.id.desc()).all()
+	id = employe.id 
+	form = AddAttendanceForm()
+	form.start.data = attendance.start
+	form.end.data = attendance.end 
+	form.reason.data = attendance.reason
+	form.status.data = attendance.status
+	if form.validate_on_submit():
+		start =  datetime.strptime(request.form["start"], '%m/%d/%Y').strftime('%Y-%m-%d')	
+		end =datetime.strptime(request.form["end"], '%m/%d/%Y').strftime('%Y-%m-%d')	
+		attendance.start = start
+		attendance.end = end
+		attendance.status = request.form["status"]
+		attendance.reason = request.form["reason"]
+		db.session.commit()
+		flash("Status Berhasil Di Rubah","success")
+		return redirect(url_for("EmployeAttendance",id=id))
+	return render_template("cuti/employe.html",attendances=attendances,form=form,employe=employe)
+
+
+@app.route("/dashboard/attendance/employe/delete/<string:id>",methods=["GET","POST"])
+@login_required
+def DeleteEmployeAttendance(id):	
+	atten = Attendance.query.filter_by(id=id).first()
+	employe = Employe.query.filter_by(id=atten.attens_id).first()
+	id = employe.id	
+	db.session.delete(atten)
+	db.session.commit()
+	flash("Data Cuti Berhasil Di Hapus","success")
+	return redirect(url_for("EmployeAttendance",id=id))
+
+
+@app.route("/dashboard/attendance/list",methods=["GET","POST"])
+@login_required
+def AttendanceList():
+	if current_user.role == "user":
+		attendances = Attendance.query.filter_by(attener_owner=current_user.id,status="Belum Di Setujui").all() 
+		return render_template("cuti/cuti_list.html",attendances=attendances)
+	else :
+		attendances = Attendance.query.filter_by(attener_owner=current_user.users,status="Belum Di Setujui").all() 
+		return render_template("cuti/cuti_list.html",attendances=attendances)
 
 
 
 
 
-
-
-
-
-
-
-
-
-
+		
 
 
 

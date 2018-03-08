@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField ,TextAreaField, IntegerField, DateField, SelectField, SubmitField
+from wtforms import StringField, PasswordField ,TextAreaField, IntegerField, DateField, SelectField, SubmitField, FloatField
 from wtforms.validators import InputRequired, EqualTo, Email, Length
 from flask_uploads import UploadSet, IMAGES, configure_uploads
 from flask_wtf.file import FileField, FileAllowed, FileRequired
@@ -49,24 +49,6 @@ class SearchForm(FlaskForm):
 	search = StringField("Cari berdasarkan nama pegawai",validators=[InputRequired(),Length(max=200)])
 
 
-'''
-class AddEmployeForm(FlaskForm):
-	name = StringField("Nama",validators=[Length(max=100)])
-	email = StringField("Email",validators=[Length(max=100)])
-	phone = StringField("Telepon",validators=[Length(max=100)])
-	departement = StringField("Departement",validators=[Length(max=100)]) 
-	skill = StringField("Skill",validators=[Length(max=100)])
-	salary = StringField("Gaji",validators=[Length(max=100)])
-	added = DateField("Mulai Bekerja",format="%m/%d/%Y")
-	birth = DateField("Tanggal Lahir",format="%m/%d/%Y")
-	address = StringField("Alamat",validators=[Length(max=100)])
-	gender = SelectField("Jenis Kelamin",choices= [("Laki Laki","Laki Laki"),("Perempuan","Perempuan")])
-	status = SelectField("Status",choices= [("Menikah","Menikah"),("Belum Menikah","Belum Menikah")])
-	religion = 	StringField("Agama",validators=[Length(max=100)])
-	notes = TextAreaField("Info Tambahan")
-
-'''
-
 class AddReviewForm(FlaskForm):
 	review = TextAreaField("Tulis Review")
 
@@ -79,15 +61,6 @@ class EditPhotoForm(FlaskForm):
 class DeleteAdminForm(FlaskForm):
 	submit = SubmitField("Delete")
 
-
-
-class AddAttendanceForm(FlaskForm):
-	name = StringField("Nama",validators=[Length(max=100)])
-	departement = StringField("Departement",validators=[Length(max=100)]) 
-	start = DateField("Dari Tanggal ",format="%m/%d/%Y")
-	end = DateField("Sampai Tanggal",format="%m/%d/%Y")
-	reason = StringField("Alasan Cuti")
-	status = SelectField("Status",choices= [("Belum Di Setujui","Belum Di Setujui"),("Di Setujui","Di Setujui")])
 
 
 
@@ -123,23 +96,6 @@ class AddBlogPostForm(FlaskForm):
 
 
 
-########## Employe Section #######################
-'''class AddEmployeForm(FlaskForm):
-	name = StringField("Nama",validators=[Length(max=100)])
-	email = StringField("Email",validators=[Length(max=100)])
-	phone = StringField("Telepon",validators=[Length(max=100)])
-	departement = StringField("Departement",validators=[Length(max=100)]) 
-	skill = StringField("Skill",validators=[Length(max=100)])
-	salary = StringField("Gaji",validators=[Length(max=100)])
-	added = DateField("Mulai Bekerja",format="%m/%d/%Y")
-	birth = DateField("Tanggal Lahir",format="%m/%d/%Y")
-	address = StringField("Alamat",validators=[Length(max=100)])
-	gender = SelectField("Jenis Kelamin",choices= [("Laki Laki","Laki Laki"),("Perempuan","Perempuan")])
-	status = SelectField("Status",choices= [("Menikah","Menikah"),("Belum Menikah","Belum Menikah")])
-	religion = 	StringField("Agama",validators=[Length(max=100)])
-	notes = TextAreaField("Info Tambahan")'''
-
-
 class AddEmployeForm(FlaskForm):
 	name = StringField("Nama",validators=[Length(max=100)])
 	nik = StringField("NIK",validators=[Length(max=200)]) 
@@ -168,7 +124,18 @@ class AddEmployeForm(FlaskForm):
 
  
 
+class AddKpiForm(FlaskForm):
+	key = StringField("Keterangan",validators=[InputRequired()])
+	indicator = SelectField("Indicator",choices= [("jumlah","jumlah"),("%","%"),("Rp","Rp")])
+	target = IntegerField("Target",validators=[InputRequired(message="Masukan Angka,Tanpa coma atau titk")])
+	complish = IntegerField("Pencapaian",validators=[InputRequired(message="Masukan Angka,Tanpa coma atau titk")])
 
+
+class AddAttendanceForm(FlaskForm):
+	start = DateField("Dari Tanggal ",format="%m/%d/%Y")
+	end = DateField("Sampai Tanggal",format="%m/%d/%Y")
+	reason = StringField("Alasan Cuti")
+	status = SelectField("Status",choices= [("Belum Di Setujui","Belum Di Setujui"),("Di Setujui","Di Setujui")])
 
 
 

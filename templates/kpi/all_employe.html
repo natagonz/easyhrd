@@ -1,0 +1,56 @@
+{% extends "layouts/dashboardtemplate.html" %}
+{% block title %} Employe {% endblock %}
+
+
+{% block content %}
+<link href="{{url_for ('static',filename='css/all_employe.css')}}" rel="stylesheet"/>
+<ul id="social_side_links">
+  <li><a href="/dashboard/add-employe"><img class="icon-float" src="https://cdn0.iconfinder.com/data/icons/round-ui-icons/512/add_blue.png" alt="" /></a></li>
+</ul>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="row">
+<div class="col-md-11 ">
+<div class="row">
+{% if length == 0 %}
+<h3> Halo {{ current_user.username }},Anda belum memiliki data pegawai. Silakan di tambah <a href="/dashboard/add-employe">disini</a> atau klik tanda plus di samping  </h3>
+{% else %}
+          <!-- Form  Search -->          
+           <div class="content">
+               {% from "includes/_formhelpers.html" import render_field %}
+               <form method="POST" enctype="multipart/form-data">
+               {{ form.hidden_tag() }}
+               <div class="row">
+               <div class="col-md-12">
+                  <div class="form-group">
+                     {{ render_field(form.search, class="form-control", placeholder="Nama Pegawai")}}
+                  </div>
+                </div>                
+                                                       
+              </div>    
+              </form>
+          </div>
+          <!-- end form -->
+{% for employe in employer %}         
+          <div class="col-md-6 col-lg-4">
+            <div class="card hover-shadow">      
+              <div class="card-body text-center pt-1 pb-20">
+                <a href="/dashboard/employe/{{ employe.id }}">
+                  <img class="avatar avatar-xxl" src="http://easyhrd.com/static/img/profile/{{employe.image_name}}">
+                </a>
+                <h5 class="mt-2 mb-0"><a class="hover-primary" href="/dashboard/employe/{{ employe.id }}">{{ employe.name }}</a></h5>
+                <span>{{ employe.departement }}</span> 
+              
+              </div>      
+            </div>
+          </div>
+        {% endfor %}
+        {% endif %}  
+
+
+          
+
+          </div>
+          </div>
+        </div>
+
+{% endblock %}
