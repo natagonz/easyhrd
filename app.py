@@ -409,7 +409,16 @@ def UserLogin():
 		user = User.query.filter_by(email=form.email.data).first()
 		if user :
 			if user.role == "SuperUser":
-				return render_template("user/login.html",form=form)
+				return render_template("user/login.html",form=form)	
+			elif user.role == "admin":
+				owner = User.query.filter_by(id=user.users).first()
+				if owner.status == "pending" :
+					return render_template("error/alert_payment.html")
+				else :		
+					if check_password_hash(user.password,form.password.data):
+						login_user(user)
+						flash("Anda berhasil masuk","success")
+						return redirect(url_for("UserDashboard"))			
 			else :	
 				if check_password_hash(user.password,form.password.data):
 					login_user(user)
@@ -973,10 +982,12 @@ def EditEmployeAttenance(id):
 def AttendanceList():
 	if current_user.role == "user":
 		attendances = Attendance.query.filter_by(attener_owner=current_user.id,status="Belum Di Setujui").all() 
-		return render_template("cuti/cuti_list.html",attendances=attendances)
+		jumlah = len(attendances)
+		return render_template("cuti/cuti_list.html",attendances=attendances,jumlah=jumlah)
 	else :
 		attendances = Attendance.query.filter_by(attener_owner=current_user.users,status="Belum Di Setujui").all() 
-		return render_template("cuti/cuti_list.html",attendances=attendances)
+		jumlah = len(attendances)
+		return render_template("cuti/cuti_list.html",attendances=attendances,jumlah=jumlah)
 
 
 

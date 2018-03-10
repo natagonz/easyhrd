@@ -54,6 +54,7 @@
                 </a>
             </div>           
              <ul class="nav">
+            {% if current_user.role == "user" %} 
              {% if current_user.status == "trial" %}
                 <li>
                     <a href="/dashboard">
@@ -71,6 +72,12 @@
                     <a href="/dashboard/employe">
                         <i class="ti-server"></i>
                         <p>Pegawai</p>
+                    </a>
+                </li>      
+                <li>
+                    <a href="/dashboard/attendance/list">
+                        <i class="ti-calendar"></i>
+                        <p>Cuti</p>
                     </a>
                 </li>                
                 <li>
@@ -97,8 +104,8 @@
                         <i class="ti-email"></i>
                         <p>Konfirmasi</p>
                     </a>
-                </li>    
-            {% elif current_user.role == "user" %}
+                </li>  
+             {% else %}
                 <li>
                     <a href="/dashboard">
                         <i class="ti-panel"></i>
@@ -116,19 +123,35 @@
                         <i class="ti-server"></i>
                         <p>Pegawai</p>
                     </a>
-                </li>                 
+                </li>      
                 <li>
-                    <a href="/dashboard/invoice">
-                        <i class="ti-bell"></i>
-                        <p>Invoice</p>
+                    <a href="/dashboard/attendance/list">
+                        <i class="ti-calendar"></i>
+                        <p>Cuti</p>
                     </a>
-                </li>  
+                </li>   
+               {% endif %}              
+                      
+            {% elif current_user.role == "admin" %}
                 <li>
-                    <a href="/dashboard/konfirmasi">
-                        <i class="ti-email"></i>
-                        <p>Konfirmasi</p>
+                    <a href="/dashboard">
+                        <i class="ti-panel"></i>
+                        <p>Dashboard</p>
                     </a>
-                </li>  
+                </li>                
+                <li>
+                    <a href="/dashboard/employe">
+                        <i class="ti-server"></i>
+                        <p>Pegawai</p>
+                    </a>
+                </li> 
+                <li>
+                    <a href="/dashboard/attendance/list">
+                        <i class="ti-calendar"></i>
+                        <p>Cuti</p>
+                    </a>
+                </li>          
+               
             <!-- untuk admin -->
             {% elif current_user.role == "SuperUser" %}   
                 <li>
@@ -168,18 +191,7 @@
                     </a>
                 </li>       
             {% else %}   
-                 <li>
-                    <a href="/dashboard">
-                        <i class="ti-panel"></i>
-                        <p>Dashboard</p>
-                    </a>
-                </li>                
-                <li>
-                    <a href="/dashboard/employe">
-                        <i class="ti-server"></i>
-                        <p>Pegawai</p>
-                    </a>
-                </li> 
+                
               
             {% endif %}                 
                 
