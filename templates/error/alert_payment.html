@@ -1,1 +1,26 @@
-<h1>Belum Lunas</h1>
+{% extends "layouts/layout.html" %}
+
+{% block title %} Payment {% endblock%}
+
+
+{% block content %}
+<link href="{{url_for ('static',filename='css/error/404.css')}}" rel="stylesheet"/>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="error-template">
+               <h2>Akun anda dalam masa non aktif </h2>
+                <div class="error-details">
+                   Mohon maaf,Akun anda dalam masa non aktif karena belum melakukan pembayaran. Silakan hubungi kami untuk mekanisme pembayaran 
+                </div>
+                <div class="error-actions">
+                    <a href="/" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-home"></span>
+                        Take Me Home </a><a href="mailto:easyhrd.com@gmail.com" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-envelope"></span> easyhrd.com@gmail.com </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
